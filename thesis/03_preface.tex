@@ -1,0 +1,107 @@
+%!TEX root = thesis.tex
+%******************************************************************************
+% Assurance everything is single handed
+%******************************************************************************
+\begin{otherlanguage}{ngerman}
+
+\begingroup
+\thispagestyle{empty}
+\begin{center}
+	\large
+	\textbf{Eidesstattliche Versicherung}
+\end{center}
+
+\vspace{0.5cm}
+
+\begin{tabular}{@{}p{8cm}p{5.8cm}}
+	\underline{\hspace{6cm}} & \underline{\hspace{5.8cm}} \\
+	\vspace{0.02cm}Name, Vorname & \vspace{0.02cm}Matrikelnummer \\
+\end{tabular}
+\vspace{0.5cm}
+
+Ich versichere hiermit an Eides Statt, dass ich die vorliegende {\thesistypegerman} mit dem Titel
+
+{\makeatletter{\emph{{\@title}}}\makeatother}
+
+selbständig und ohne unzulässige fremde Hilfe erbracht habe. Ich habe keine anderen als die angegebenen Quellen und Hilfsmittel benutzt. Für den Fall, dass die Arbeit zusätzlich auf einem Datenträger eingereicht wird, erkläre ich, dass die schriftliche und die elektronische Form vollständig übereinstimmen. Die Arbeit hat in gleicher oder ähnlicher Form noch keiner Prüfungsbehörde vorgelegen.
+
+\vspace{0.3cm}
+
+\begin{tabular}{@{}p{8cm}p{5.8cm}}
+	\underline{\smash{Aachen, den \today}} & \underline{\hspace{5.8cm}}\\
+	\vspace{0.02cm}Ort, Datum & \vspace{0.02cm}Unterschrift \\
+\end{tabular}
+
+\vspace{1cm}
+
+\begin{small}
+	\textbf{Belehrung:}
+
+	\textbf{§ 156 StGB: Falsche Versicherung an Eides Statt}\\
+	Wer vor einer zur Abnahme einer Versicherung an Eides Statt zuständigen Behörde eine solche Versicherung falsch abgibt oder unter Berufung auf eine solche Versicherung falsch aussagt, wird mit Freiheitsstrafe bis zu drei Jahren oder mit Geldstrafe bestraft.
+
+	\textbf{§ 161 StGB: Fahrlässiger Falscheid; fahrlässige falsche Versicherung an Eides Statt}\\
+	(1) Wenn eine der in den §§ 154 bis 156 bezeichneten Handlungen aus Fahrlässigkeit begangen worden ist, so tritt Freiheitsstrafe bis zu einem Jahr oder Geldstrafe ein.\\
+	(2) Straflosigkeit tritt ein, wenn der Täter die falsche Angabe rechtzeitig berichtigt. Die Vorschriften des § 158 Abs. 2 und 3 gelten entsprechend
+\end{small}
+
+\vspace{0.3cm}
+
+Die vorstehende Belehrung habe ich zur Kenntnis genommen:
+
+\vspace{0.3cm}
+
+
+
+\begin{tabular}{@{}p{8cm}p{5.8cm}}
+	\underline{\smash{Aachen, den \today}} & \underline{\hspace{5.8cm}}\\
+	\vspace{0.02cm}Ort, Datum & \vspace{0.02cm}Unterschrift \\
+\end{tabular}
+
+\endgroup
+\cleardoublepage
+
+\end{otherlanguage}
+
+%******************************************************************************
+% Abstract
+%******************************************************************************
+
+\begingroup
+\def\abstractname{Abstract}
+\begin{abstract}
+\thispagestyle{plain}
+
+In recent years, deep learning methods have gained popularity in various research areas.
+Especially, data-driven businesses have rapidly adopted and deployed machine learning techniques that use neural networks.
+Despite this fact, neural networks are internally often poorly understood. Therefore, the attack surface
+as well as the accuracy of these systems is difficult to measure and assess. However, in autonomous driving, spam filters,
+biometric authentication, algorithmic trading or medical applications precision of prediction systems is vital \cite{NeuralMed,ControlPipeline}.
+Therefore, this thesis focuses on the creation of adversarial inputs for these networks. To find the
+optimal input perturbation, different convex optimization techniques are introduced. Comparisons to previous research papers are drawn and
+existing techniques improved through iterative approximations. Later on, experimentation results are presented to verify these
+convex optimization techniques. Adversarial examples introduced in the simulations are often
+indistinguishable from the original input images.
+\end{abstract}
+\endgroup
+
+%******************************************************************************
+% Acknowledgements
+%******************************************************************************
+
+
+\begingroup
+\def\abstractname{Acknowledgements}
+\begin{abstract}
+\thispagestyle{plain}
+
+I would first like to thank my thesis advisor M.Sc. Emilio R. Balda for teaching me the necessary skills for academic research and software development.
+Getting used to tensorflow and various optimization techniques was quite a steep slope.
+Furthermore, I would like to thank my friends and family for the endless support they have given me over the years of my studies.
+
+\end{abstract}
+\endgroup
+
+
+\tableofcontents
+\cleardoublepage

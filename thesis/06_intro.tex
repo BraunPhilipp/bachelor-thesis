@@ -1,0 +1,65 @@
+%!TEX root = thesis.tex
+\chapter{Introduction}\label{sec:chapter}
+
+\section{Neural Networks}
+
+\begingroup
+Neural networks are a set of algorithms, modeled loosely after human brains and are designed to recognize patterns \cite{DeepIntro}.
+To recognize a specific pattern these networks need to be trained on large datasets to optimize the high number of model parameters.
+This has led to a lot of research by data-driven companies like Google. Thus resulting in various breakthroughs in text processing engines, image recognition
+and speech processing using Deep Neural Networks (DNNs) \cite{GoogleTranslation, AlexNet, SpeechRecognition}.
+
+Unfortunately, these networks are also not fault-free. While prooving the fault tolerance of
+mathematical techniques and algorithms is relatively simple, finding the hidden edge cases for DNNs is not.
+Therefore, rigorous adversarial testing is necessary to avoid failures.
+\endgroup
+
+
+\section{Adversarial Examples}\label{sec:section}
+
+\begingroup
+Adversarial examples are inputs intentionally designed to change the output of a DNN. Often the perturbed
+input images are almost indistinguishable from the original images.
+Therefore, an attacker with
+access to the input of a DNN is able to severely impact the system's performance without being noticed by the systems' users.
+This is especially important in safety critical systems like medical imaging, surveillance applications or autonomous driving.
+Therefore, various research has gone into evaluating the instability of DNN. Fawzi et al. \cite{NeuralRandom} has shown
+that random noise is usually not sufficient to test DNNs against adversarial attacks.
+
+One of the first papers attempting to attack adversarial networks using convex programming has
+been published by Goodfellow et al. \cite{Goodfellow}. This paper introduces a gradient method to calculate the
+optimal adversarial example for a given neural network. The input perturbation is constrained by a specific $\epsilon$ value.
+For images with pixel values between 0 and 1, $\epsilon$ is defined within the same range. In this thesis,
+newer convex optimization techniques are introduced.
+The strategies developed in this thesis can be applied to many research fields that use DNNs.
+
+Furthermore, closed-form solutions can often be extended through iterative methods. One of the first algorithms to find adversarial
+examples based on successive linearization was DeepFool \cite{DeepFool}. This particular algorithm uses the
+closed-form solution to the linear pogramming problem in this thesis. Furthermore, this strategy is generalized for different
+$p$-norm constraints of the maximization problem.
+Carlini et al. \cite{Robust} proposes 3 different adversarial attacks to avoid defensive distillation. Defensive
+distillation was originally proposed by Papernot et al. \cite{Distillation} and increases the robustness of an arbitrary network.
+Their research shows that the success rate of an attack can be reduced from 95\% to 0.5\%. Carlinis' methods show that a
+multitude of attacks need to be considered to verify the robustness of adversarial attacks.
+Other successful attack techniques include single and multiple pixel attacks, which specifically only manipulate a small
+subset of pixels \cite{SingleClassification,MultiplePixel}. Most of these techniques require knowledge of the target
+systems' parameters, Sakar et al. \cite{BlackBox} developed a black box approach to generate adversarial examples for an unknown
+network. \cite{BlackBox2} provides an iterative solution to these black box systems.
+While a lot of research has gone into evaluating DNNs for classification tasks, only \cite{VariationalAttack} has attempted to
+craft adversarial examples for autoencoders. In contrast to the autoencoders used in this thesis, \cite{VariationalAttack}
+attempts to fool a variational autoencoder into reconstructing a completely different target image.
+\endgroup
+
+
+\section{Thesis Structure}\label{sec:section}
+
+\begingroup
+This thesis is structured into three main chapters. Chapter 2 presents and explains the theoretical foundations for this
+thesis. It contains a detailed description of neural networks and their inner workings. Afterwards, an introduction into
+perturbation analysis is given. Furthermore, autoencoders and regression problems are introduced as the underlying
+foundation for the experimentation examples.
+Afterwards, Chapter 3 introduces different adversarial attacks used to fool trained neural networks. The main focus is set
+on convex attacks that use linear or quadratic programming problems. Chapter 4 then describes the simulation setup and the
+test results after implementing the different attack methods. In the end, a conclusion and outlook for possible
+improvements is given in Chapter 5.
+\endgroup

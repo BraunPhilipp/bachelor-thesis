@@ -1,0 +1,84 @@
+% This template is intended to write a thesis using Latex at TI, RWTH.
+% It supports bibtex and acronyms, which need a special toolchain building
+% the document. Modern editors support such custom toolchains. Using acronyms
+% needs the command makeglossaries to run, which requires a running Perl
+% installation.
+
+% The title of thesis can be set in three different fonts. Define the command
+% of the font to use
+% Standard sarif font. Works on all systems
+% \def\titlefontStandardSerif{}
+% Standard san sarif font. Works on all systems
+\def\titlefontStandardSanSerif{}
+% Special sarif font. Some viewers cannot display the font, if the document is
+% created using latex (see below). Using pdflatex makes no problems. However
+% this font makes the titlepage look interesting and is chosen as default.
+%\def\titlefontSpecial{}
+
+% One of these two toolchains are recommended. Use version a, if used graphics
+% are *.eps/*.ps. Otherwise use version b. Both toolchains are intended to create
+% a pdf and tested in the linux system accessible to students.
+% '%' is the name of this file, i.e. 'thesis'.
+
+% Version a
+%  latex -synctex=1 -interaction=nonstopmode %.tex
+%  bibtex %.aux
+%  makeglossaries %
+%  latex -synctex=1 -interaction=nonstopmode %.tex
+%  dvips -o %.ps %.dvi
+%  ps2pdf -dEmbedAllFonts=true %.ps
+
+% Version b
+%  pdflatex -synctex=1 -interaction=nonstopmode %.tex
+%  bibtex %.aux
+%  makeglossaries %
+%  pdflatex -synctex=1 -interaction=nonstopmode %.tex
+
+% In the following adapt the commands to your needs.
+\author{Philipp Braun}
+\title{Design of Adversarial Inputs for Deep Neural Networks using Iterative Approximations}
+% For the titlepage the title needs to be split into 3 or 4 lines. If the fourth line is needed,
+% use \titlelineA. Lines B and D are highlighted and should contain the important part of the title.
+\def\titlelineA{Design of Adversarial Inputs for Deep Neural Networks using Iterative Approximations}
+\def\titlelineB{Entwurf bösartiger Eingaben für tiefe neuronale Netze \\ mittels iterativer Approximationen}
+% Further information
+\def\thesistypegerman{Bachelorarbeit}
+\def\thesistype{Bachelor Thesis}
+\def\supervisor{M.Sc. Emilio R. Balda} % Not professor
+
+% The header includes all packages and defines many macros. All packages are tested to run
+% under the latex-distribution (texlive) available in the student's linux system. The
+% macros are neither complete nor the only way to typeset math. However they have shown to
+% be useful while writing a thesis. Both packages and macros can be deleted or commented
+% if not needed.
+
+\input{01_header}
+
+% Beginning of the real document
+\begin{document}
+\let\origref\ref % The original \ref command is now accessible by \origref
+\let\ref\cref    % The command \ref uses \cref from the cleveref package now
+
+% First pages with roman numbering
+\pagenumbering{roman}
+
+\include{02_titlepage}
+\include{03_preface}
+
+\include{04_acronyms}
+\include{05_notation}
+
+% The main part
+\pagenumbering{arabic}
+\include{06_intro}
+\include{07_neural}
+\include{08_adversarial}
+\include{09_simulations}
+\include{10_conclusion}
+
+\include{11_appendix}
+
+\appendix
+\include{end}
+
+\end{document}

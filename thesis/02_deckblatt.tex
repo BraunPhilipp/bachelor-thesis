@@ -1,0 +1,109 @@
+%!TEX root = thesis.tex
+%******************************************************************************
+% Some definitions
+%******************************************************************************
+
+% Command for generating a specific amount of whitespace
+\newlength{\drop} 
+\drop=0.05\textheight % Define the command as 10% of the total text height
+
+% Format of emphasized title line
+\def\emphtitleline{\huge\color{MidnightBlue}}
+\def\nonemphtitleline{\large}
+
+% Two lines at top and bottom of page
+\def\twolinestop{ %
+\rule{\textwidth}{1pt}\par % Thick horizontal line
+\vspace{2pt}\vspace{-\baselineskip} % Whitespace between lines
+\rule{\textwidth}{0.4pt}\par % Thin horizontal line
+}
+\def\twolinesbottom{ %
+\rule{\textwidth}{0.4pt}\par % Thick horizontal line
+\vspace{2pt}\vspace{-\baselineskip} % Whitespace between lines
+\rule{\textwidth}{1pt}\par % Thin horizontal line
+}
+
+% The font of the title
+% Standard serif
+\ifdefined\titlefontStandardSerif
+\def\titlefont{\normalfont} 
+\fi
+% Standard san serif
+\ifdefined\titlefontStandardSanSerif
+\def\titlefont{\sffamily} 
+\fi
+% Special serif font. Name: Pacioli
+\ifdefined\titlefontSpecial
+\def\titlefont{\usefont{\encodingdefault}{cpc}{m}{n}\selectfont} 
+\fi
+
+%******************************************************************************
+% The real title page
+%******************************************************************************
+
+\begin{titlepage}
+\vspace*{-40mm}
+\begin{flushright}
+\includegraphics{figures/rwth_ti_de_rgb.jpg}
+\end{flushright}
+{
+\centering
+
+\vspace*{-10mm}
+
+\twolinestop
+
+\vspace*{5mm}
+
+Diese Arbeit wird dem Lehrstuhl für Theoretische Informationstechnik vorgelegt.
+
+\vspace*{1cm}
+Deutscher Titel: \hrulefill
+
+\hrulefill
+
+Englischer Titel: \hrulefill
+	
+\hrulefill
+
+$\square$ Masterarbeit \hspace*{10mm} $\square$ Bachelorarbeit
+
+\vspace*{8mm}
+
+Name des Studierenden: \hrulefill\hrulefill
+
+Vorname:\hspace*{25mm} \hrulefill\hrulefill
+
+	Matrikelnummer:\hspace*{12mm}  \hrulefill \hrulefill
+
+} % Centering beendet
+
+\vspace*{8mm}
+
+Vollständiger Name des 1. Prüfers: Univ.-Prof.~Dr.~rer.~nat.~Rudolf Mathar
+
+\vspace*{10mm}
+
+Aachen, den 
+
+\vspace*{-5mm}
+\hspace*{75mm} \hrulefill 
+	
+\vspace*{-5mm}
+\hfill Univ.-Prof.~Dr.~rer.~nat.~Rudolf Mathar
+
+\vspace*{12mm}
+	{
+\centering
+%\includegraphics{figures/Ti_black}\\[0.5\baselineskip] % Include a department/university logo
+{\large \textsc{Lehrstuhl für Theoretische Informationstechnik}}\\[0.5\baselineskip] % Institute
+{\large \textsc{RWTH Aachen University}}\par % Uni
+%
+%\vspace*{0.2\drop} % Whitespace 
+%
+\twolinesbottom
+} % end centering
+
+\end{titlepage}
+
+

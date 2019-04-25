@@ -1,0 +1,6 @@
+./results/summary/aen_stl10_psnr_summary_stl10.csv
+./results/summary/c_dcscn_psnr_summary_set14.csv
+./results/summary/conv_psnr_summary_cifar.csv
+./results/summary/fcnn2_psnr_summary_mnist.csv
+./results/summary/fcnn_psnr_summary_mnist.csv
+./results/summary/koala_psnr_summary_stl10.csv

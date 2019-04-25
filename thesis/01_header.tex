@@ -1,0 +1,249 @@
+%!TEX root = thesis.tex
+% The basic document settings
+\documentclass[11pt,a4paper,twoside,abstract=on]{scrreprt}
+% If you have problems compiling this template, try adding the following
+% package in order to allow for more packages to be included
+% A possible error could look like this:
+% "No room for a new \dimen \newdimen \MPscratchDim"
+%\usepackage{etex}
+
+% Compatibility issues solved
+% \usepackage{scrhack}
+
+\usepackage{amsmath}
+\usepackage[makeroom]{cancel}
+\usepackage[ngerman,english]{babel}
+\usepackage{setspace}
+\usepackage{subcaption}
+
+\usepackage{sansmath}
+
+\DeclareMathOperator*{\argmax}{argmax}
+
+% Further (Koma) options:
+% Table of references and indices in TOC
+\KOMAoptions{bibliography = totoc}
+\KOMAoptions{index = totoc}
+% Behaviour of paragraphs (full = empty line, false = ident)
+\KOMAoptions{parskip = full}
+% Draw line under page header
+\KOMAoptions{headsepline = true}
+% New chapters always start on right page
+\KOMAoptions{open = right}
+
+% Page formatting
+\setlength{\evensidemargin}{0.5cm}
+\setlength{\oddsidemargin}{0.5cm}
+\setlength{\topmargin}{0.5cm}
+\setlength{\textwidth}{15cm}
+
+% Pre formatted pagestyle
+\pagestyle{headings}
+
+% Font and language
+%\usepackage{german}
+%\usepackage[latin1]{inputenc}
+
+
+%\usepackage[ngerman]{babel}
+%\usepackage{lmodern} % Better font
+%\usepackage[utf8]{inputenc}
+%\usepackage[T1]{fontenc}
+
+\usepackage{ifxetex}
+
+\ifxetex
+  \usepackage{fontspec}
+  \usepackage{polyglossia}
+  \setmainlanguage[spelling=new, latesthyphen=true]{german}
+\else
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage[ngerman]{babel}
+  \usepackage{lmodern}
+\fi
+
+%\definecolor{darkgray}
+%\font{Adobe Caslon Pro}
+% Easier quotation marks
+
+%\usepackage [autostyle, english = british]{csquotes}
+%\MakeOuterQuote{"}
+
+% Mandatory for some bib styles
+%\usepackage{natbib}
+
+% Maths:
+\usepackage{amsfonts, amsmath, amsthm, amscd, amssymb, array, bm, mathtools}
+\usepackage{nicefrac}
+\usepackage{cases} % For sub numbered cases
+\numberwithin{equation}{section} % Equation umbering chapter.section.equation
+\usepackage{bigints} % Big integral signs
+
+% Bring color into Latex
+\usepackage[svgnames]{xcolor}
+\usepackage{colortbl}
+\definecolor{hellgrau}{rgb}{0.9,0.9,0.9}
+
+% Several graphics packages
+% General graphics
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{lipsum}
+%\usepackage{flafter}
+% LaPrint (exports matlab figures for latex)
+\usepackage{color, psfrag}
+% ps-graphics
+\usepackage{pstricks,pst-plot,pst-node}
+% TIKZ
+\usepackage{tikz}
+\usetikzlibrary{arrows,matrix,positioning}
+% Set the path for figure files
+\graphicspath{{./figures/}}
+\def\layersep{2.5cm}
+\tikzset{basic/.style={draw,fill=blue!50,text width=1em,text badly centered}}
+\tikzset{input/.style={basic,circle}}
+\tikzset{weights/.style={basic,rectangle,minimum width=0.7cm, minimum height=0.6cm}}
+\tikzset{functions/.style={basic,circle,fill=blue!50}}
+
+
+% Prevent figures from floating too much
+\usepackage[section]{placeins}
+
+% SI-Units
+\usepackage{siunitx}
+
+% Algorithms
+% \usepackage{algpseudocode,algorithmicx}
+% \renewcommand{\algorithmicrequire}{\textbf{Input:}}
+%\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+\usepackage{algorithm,algpseudocode}
+% \usepackage[ruled]{algorithm2e}
+
+% Better tabulars, enables thicker lines
+\setlength{\doublerulesep}{0pt}
+\usepackage{multirow} % Multirows in tabulars
+\usepackage{longtable, tabu} % Flexible tabulars i.e. page breaks and horizontal fill
+\newtabulinestyle{mydashline=on 1.5pt off 2pt}
+\tabulinesep=1mm
+
+% Creating an index
+%\usepackage{makeidx}
+% Adding items to index more comfortably
+%\newcommand{\idx}[1]{#1\index{#1}}
+
+% Abbrevations
+% Note that the abbrevations support commands like \ac{acronym} and the creation
+% of a list of acronyms. In order to create this list, the document needs to be
+% compiled as follows (includes optional bibtex). Use pdflatex or latex as preferred
+%     (pdf)latex thesis.tex
+%     bibtex thesis.aux
+%     makeglossaries thesis
+%     (pdf)latex thesis.tex
+%\usepackage[nomain, toc, shortcuts]{glossaries}
+% Removes a dot at the end of every description
+%\renewcommand*{\glspostdescription}{}
+%\loadglsentries{acronym.tex}
+%\bibliographystyle{alphadin}
+
+
+
+% Links in PDFs
+\usepackage{hyperref}
+\hypersetup{colorlinks=false, pdfborder={0 0 0}}
+\makeatletter
+\hypersetup{pdftitle = \@title}
+\hypersetup{pdfauthor = \@author}
+\makeatother
+\hypersetup{pdfsubject = \thesistypegerman}
+
+% Automatic referencing (e.g. \ref{...} creates figure 2.1.3)
+\usepackage[english]{cleveref}
+\renewcommand{\figurename}{Figure}%
+% No eq. in front of equations
+\crefformat{equation}{#2(#1)#3}
+\Crefformat{equation}{#2(#1)#3}
+
+% Some math macros:
+% Operators
+\newcommand{\modulo}{\ensuremath{\mbox{mod }}}
+\newcommand{\abs}[1]{\ensuremath{\left\vert #1 \right\vert}}
+\newcommand{\card}[1]{\ensuremath{\left\vert #1 \right\vert}}
+\newcommand{\norm}[2]{\ensuremath{\left\Vert #1 \right\Vert_{#2}}}
+\newcommand{\divisor}{\ensuremath{\mathrm{div}}}
+\newcommand{\ord}{\ensuremath{\mathrm{ord}}}
+\newcommand{\supp}{\ensuremath{\mathrm{supp}}}
+\newcommand{\ggt}{\ensuremath{\mathrm{ggt}}}
+\newcommand{\charac}{\ensuremath{\mathrm{char}}}
+\newcommand{\ud}{\ensuremath{\,\mathrm{d}}} % Integral d (dx, dy, etc.)
+\newcommand{\ppart}[1]{\ensuremath{\left[#1\right]^{+}}}
+\newcommand{\npart}[1]{\ensuremath{\left[#1\right]^{-}}}
+\DeclareMathOperator{\diag}{diag}
+\newcommand{\vecop}{\ensuremath{\operatorname{\mathbf{vec}}}}
+
+% Sets
+\newcommand{\Z}{\ensuremath{\mathbb{Z}}}
+\newcommand{\N}{\ensuremath{\mathbb{N}}}
+\newcommand{\J}{\ensuremath{\mathbb{J}}}
+\newcommand{\HD}{\ensuremath{\mathbb{P}}}
+\newcommand{\D}{\ensuremath{\mathbb{D}}}
+\newcommand{\R}{\ensuremath{\mathbb{R}}}  % Real numbers
+\newcommand{\Rp}{\ensuremath{\R_{\geq 0}}} % Nonnegative real numbers
+\newcommand{\CO}{\ensuremath{\mathcal{O}}}
+\newcommand{\F}{\ensuremath{\mathbb{F}}}
+\newcommand{\I}{\ensuremath{\mathcal{I}}}
+\newcommand{\allsubsets}[1]{\mathfrak{B}(#1)}
+\newcommand{\X}{\ensuremath{\mathbb{X}}}
+\newcommand{\Y}{\ensuremath{\mathbb{Y}}}
+
+% Optimization
+\newcommand{\minimize}{\ensuremath{&\operatorname{minimize} &&}}
+\newcommand{\minimizex}[1]{\ensuremath{&\underset{#1}{\operatorname{minimize}}&&}}
+\newcommand{\maximize}{\ensuremath{&\operatorname{maximize} &&}}
+\newcommand{\maximizex}[1]{\ensuremath{&\underset{#1}{\operatorname{maximize}}&&}}
+\newcommand{\st}{\ensuremath{&\operatorname{subject~to}&&}}
+\newcommand{\stff}{\ensuremath{&&&}}
+
+% For vectors and matrices
+\renewcommand{\vec}[1]{\ensuremath{\bm{\MakeLowercase{#1}}}}
+\newcommand{\mat}[1]{\ensuremath{\bm{\MakeUppercase{#1}}}}
+\newcommand{\vecidx}[2]{\ensuremath{\MakeLowercase{#1}_{#2}}}
+\newcommand{\vecidxB}[2]{\ensuremath{\left[#1\right]_{#2}}}
+\newcommand{\vecidxBppart}[2]{\ensuremath{\left[#1\right]^{+}_{#2}}}
+\newcommand{\vecidxBnpart}[2]{\ensuremath{\left[#1\right]^{-}_{#2}}}
+\newcommand{\matidx}[3]{\ensuremath{\MakeLowercase{#1}_{#2 #3}}}
+\newcommand{\matidxB}[3]{\ensuremath{\left[#1\right]_{#2 #3}}}
+\newcommand{\matidxBppart}[3]{\ensuremath{\left[#1\right]_{#2 #3}^{+}}}
+\newcommand{\transp}[1]{\ensuremath{#1^{\top}}}
+\newcommand{\inv}[1]{\ensuremath{#1^{-1}}}
+\newcommand{\pinv}[1]{\ensuremath{#1^{\dagger}}}
+\newcommand{\opt}[1]{\ensuremath{#1^{\star}}}
+\newcommand{\unitvec}{\vec{e}}
+\newcommand{\identmat}{\mat{i}}
+\newcommand{\zerovec}[1]{\vec{0}_{#1}}
+\newcommand{\zeromat}[2]{\mat{0}_{#1\times #2}}
+\newcommand{\onevec}[1]{\vec{1}_{#1}}
+\newcommand{\onemat}[2]{\mat{1}_{#1\times #2}}
+
+% Logics
+\newcommand{\logicnot}{\lnot}
+\newcommand{\logicand}{\wedge}
+\newcommand{\logicor}{\vee}
+\newcommand{\logicxor}{\oplus}
+
+% Colors
+\newcommand{\bl}{\color{blue}}
+\newcommand{\bk}{\color{black}}
+\newcommand{\rd}{\color{red}}
+\newcommand{\gr}{\color{green}}
+
+\newcommand{\mcl}{\mathcal}
+
+% Convert number 1 to 12 into corresponding months
+%\newcommand{\monthword}[1]{\ifcase#1\or January\or February\or March\or April\or
+%                                        May\or June\or July\or August\or
+%                                        September\or October\or November\or December\fi}
+
+%\makeglossaries   % -> run makeglossaries thesis
+\makeindex

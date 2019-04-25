@@ -1,0 +1,32 @@
+\chapter{Conclusion and Outlook}\label{sec:section}
+
+\begingroup
+In this thesis, various adversarial attacks were theoretically and practically evaluated. Comparisons
+between previous research and methods introduced in this thesis were drawn.
+The simulation results have clearly shown that neural networks
+are not resistant to adversarial attacks. Large changes in output images were discovered with only small perturbation
+changes to the input. Iterative techniques have proven to significantly improve adversarial perturbation attacks. Noteworty
+performance increases were found for less than 10 iterations.
+Despite this fact, this thesis also shows that networks can be adjusted to remove
+the impact of adversarial attacks. Techniques to avoid adversarial attacks include dropout, training with FGSM or using
+a predefined filter like the bicubic interpolation filter in the C\_DCSCN model. In a more general
+scenario of non-autoencoders these attacks can be used to change the output of regression problems.
+The application of these techniques was introduced through the paper Eykholt et al. \cite{RealWorld}.
+
+Besides the mere implementation of adversarial attacks, this thesis has also given an introduction into different
+convex optimization techniques. Older literature like Goodfellow et al. \cite{Goodfellow} was introduced
+and used to derive newer techniques like single subset attacks or various generalization provided by
+Balda et al. \cite{NeuralError}. Specifically this thesis has given a look into the inner workings of optimization
+techniques and provides various proofs used to calculate adversarial examples. For single subset
+attacks the impact of ordering for a greedy approximation was also studied.
+The adversarial attacks themselves were studied based on six different neural networks. These networks utilize
+convolutional and fully-connected layers to solve their respective regression problem. The most resistant network
+has proven to be the residual network (C\_DCSCN), which only uses a DNN for slight
+variations of a higher resolution image.
+
+Apart from using convex optimization techniques to find adversarial examples it is also possible to build
+Generative Adversarial Networks (GANs) that are trained to find adversarial examples for a certain type
+of network. Due to their higher non-linearity they might be able to find adversarial examples, which cannot be
+found due to the taylor approximations used for convex optimizations \cite{GAN}. Evaluating the effectiveness of
+these attacks against convex solutions is left for future research.
+\endgroup

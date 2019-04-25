@@ -1,0 +1,532 @@
+\chapter{Adversarial Attacks}\label{sec:chapter}
+
+\section{Introduction}\label{sec:section}
+
+\begingroup
+Misclassification of DNNs have become more prominent in recent years. Especially in
+medical applications and automous driving errors of DNN can be fatal \cite{NeuralMed,ControlPipeline}.
+To reduce the failure of these systems fast and secure methods to evaluate these networks are necessary.
+In the following various optimization techniques are introduced to find networks prone to errors.
+To compare different attack characteristics a regression problem is used.
+Adversarial attacks (input perturbations for a NN) can be introduced into networks in many ways.
+Eykholt et al. \cite{RealWorld} has shown that these attacks can be performed in the real world. The research paper
+uses stickers and graffitis to test adversarial attacks.
+
+Generally, the aim of an attacker is to create an additive perturbation $ \bm{\eta} \in \mathbb{R}^M$ with $M \triangleq n^{(1)}$ that is unnoticeable by
+an outstanding entity. The loss or cost function for $\bm{x} + \bm{\eta}$ is given by $ \mcl{L}(\bm{x} + \bm{\eta}) = \lvert\lvert f(\bm{x} + \bm{\eta}) - \bm{y} \rvert\rvert^2_2 $.
+The maximum input noise is limited through $\lvert\lvert \bm{\eta} \rvert\rvert_p \leq \epsilon$ with $\epsilon \in \mathbb{R}$ and $p \in \mathbb{N}$.
+The objective of an attacker is to maximize this loss. Therefore, the problem can be defined as
+\endgroup
+
+\begin{equation}
+\begin{aligned}
+	\max_{ \bm{\eta} } \; \mcl{L}(\bm{x} + \bm{\eta}) = \max_{ \bm{\eta} } \; \lvert\lvert f(\bm{x} + \bm{\eta}) - \bm{y} \rvert\rvert^2_2 \quad s.t. \quad \lvert\lvert \bm{\eta} \rvert\rvert_p  \leq \epsilon \\
+\end{aligned}
+\label{intromax}
+\end{equation}
+
+
+\begingroup
+Unfortunately, this problem cannot be easily solved, since $f(\bm{x}+\bm{\eta})$ depends on $\bm{\eta}$.
+\endgroup
+
+
+\section{Convex Attacks}\label{sec:section}
+
+% Linear %
+\subsection{Linear Programming Problem}\label{sec:section}
+
+\begingroup
+One of the earliest approaches to solve \ref{intromax} was the Fast Gradient Sign Method (FGSM), which was first introduced by Goodfellow et al. \cite{Goodfellow}. The paper
+linearizes the cost function around $\bm{x}$ and sets $p=\infty$. The optimal max-norm is then given by
+\endgroup
+
+\begin{equation}
+\begin{aligned}
+	\bm{\eta} = \epsilon \; \text{sign}( \nabla_{\bm{x}} \mcl{L}) \quad w. \quad \lvert\lvert \bm{\eta} \rvert\rvert_{\infty} \leq \epsilon
+\end{aligned}
+\label{fastgradientsign}
+\end{equation}
+
+\begingroup
+This linarization can be performed using a taylor expansion as shown in \ref{taylorlinear}. If $ \mcl{L}(\bm{x}) = \left\lvert\lvert f(\bm{x}) - \bm{y} \right\rvert\rvert^2_2 $
+is used the product rule can be applied and the effect of $\bm{\eta}$ thoroughly studied.
+\endgroup
+
+\begin{equation}
+\begin{aligned}
+	\mcl{L}(\bm{x} + \bm{\eta}) &\approx \mcl{L}(\bm{x}) + \bm{\eta}^T \nabla \mcl{L}(\bm{x}) = \mcl{L}(\bm{x}) + \bm{\eta}^T \nabla \mcl{L}(\bm{x}) \\[10pt]
+		&= \mcl{L}(\bm{x}) + \bm{\eta}^T \nabla( (\bm{y} - f(\bm{x}))^T (\bm{y} - f(\bm{x})) ) \\[10pt]
+		&= \mcl{L}(\bm{x}) + \bm{\eta}^T \nabla( \bm{y}^T\bm{y} - f(\bm{x})^T \bm{y} + f(\bm{x})^T f(\bm{x}) - \bm{y}^T f(\bm{x}) ) \\[10pt]
+		&= \mcl{L}(\bm{x}) + \bm{\eta}^T (-\bm{J}_f(\bm{x})^T \bm{y} - \bm{y}^T \bm{J}_f(\bm{x}) + \bm{J}_f(\bm{x}) f(\bm{x}) + f(\bm{x})^T \bm{J}_f(\bm{x})) \\[10pt]
+		&= \mcl{L}(\bm{x}) - 2 \bm{\eta}^T \bm{J}_f(\bm{x}) ( \bm{y} - f(\bm{x}) ) \\
+\end{aligned}
+\label{taylorlinear}
+\end{equation}
+
+\begingroup
+As shown above this leads to a problem for perfectly fitted models, where $ \bm{y} = f(\bm{x})$ because the gradient $\nabla \mcl{L} = 0$. This
+is especially problematic for autoencoders, which add additonal features to the input like colorization. $\bm{y} \in \mathbb{R}^N$ is
+usually unknown in these systems and needs to be determined during a first iteration of the DNN. Therefore,
+another point $ \bm{\tilde{x}}$ needs be defined, which lies in close proximity to $\bm{x}$. In this point the gradient $ \nabla \mcl{L}(\bm{\tilde{x}}) \neq 0 $
+and $ \lvert\lvert x - \tilde{x} \rvert\rvert_p \ll \epsilon $. Therefore, \ref{intromax} can now be generally solved through
+\endgroup
+
+
+\begin{equation}
+% \tag{$\dagger$}
+\begin{aligned}
+	\max_{\bm{\eta}} \nabla \mcl{L}(\bm{\tilde{x}})^T \bm{\eta} \quad s.t. \quad \lvert\lvert \bm{\eta} \rvert\rvert_p \leq \epsilon
+\end{aligned}
+\label{maxlinopt}
+\end{equation}
+
+\begingroup
+In the following, $\bm{\tilde{x}}$ and $\bm{x}$ are not further separated.
+The closed-form solution for different $p$-norms are given below. Generally, a solution is found using
+the upper boundary of the maximization problem.
+\endgroup
+
+\begin{equation}
+\begin{aligned}
+p = 1: & \quad \bm{\eta} = \epsilon \; \bm{e}_{k^\star} \quad w. \quad k^\star = \argmax_{k} \; \lvert (\nabla \mcl{L}(x))_k \rvert \\[20pt]
+p = 2: & \quad \bm{\eta} = \epsilon \; \frac{\nabla \mcl{L}(\bm{x})}{\lvert\lvert \nabla \mcl{L}(\bm{x}) \rvert\rvert_2} \\[20pt]
+p = \infty: & \quad \bm{\eta} = \epsilon \; \text{sign}(\nabla \mcl{L}(\bm{x}))
+\end{aligned}
+\label{linear_programming_closed}
+\end{equation}
+
+
+$\bm{Proof.}$ The proof for all linear solutions follows the Hölder inequality \cite{Hoelder}. The theorem states that if $q \triangleq \frac{p}{p-1}$ and $p, q \in [1, \infty]$
+the upper boundary can be found by
+
+\begin{equation}
+\begin{aligned}
+	\lvert\lvert \bm{f}^T\bm{g} \rvert\rvert_1 \leq \lvert\lvert \bm{f} \rvert\rvert_p \lvert\lvert \bm{g} \rvert\rvert_q
+\end{aligned}
+\label{hoelders_inequality}
+\end{equation}
+
+and can be reached through
+
+\begin{equation}
+\begin{aligned}
+	\sup_{\lvert\lvert \bm{\eta} \rvert\rvert_p \leq 1} \nabla \mcl{L}(\bm{x})^T \bm{\eta} = \lvert\lvert \nabla \mcl{L}(\bm{x}) \rvert\rvert_q
+\end{aligned}
+\label{linear_programming_sup}
+\end{equation}
+
+The upper bound is then reached through
+
+\begin{equation}
+\begin{aligned}
+	\bm{\eta} = - \epsilon \frac{1}{\lvert\lvert \nabla \mcl{L}(\bm{x}) \rvert\rvert_q^{q-1}} \cdot ( \text{sign}( \nabla \mcl{L}(\bm{x}) ) \odot \lvert \nabla \mcl{L}(\bm{x}) \rvert^{q-1} )
+\end{aligned}
+\label{linear_programming_solution}
+\end{equation}
+
+Since there is no larger supremum, $\bm{\eta}$ needs to be the optimal solution.
+Setting $p$ to the respective norm then results in the closed-form solutions in \ref{linear_programming_closed}. $ \blacksquare $
+
+\begingroup
+To find even more accurate solutions to the linear programming problem iterative solutions can be used. One of the first attempts was the
+DeepFool algorithm \cite{DeepFool}. After calculating an adversarial example for a particular input vector, a new noise vector is calculated
+using the previous adversarial input. For example, the iterative solution for the $l_{\infty}$-norm
+is calculated using the following pseudocode. Iterative solutions for other norms follow the same procedure.
+\endgroup
+
+%%% PSEUDO CODE
+
+\begin{algorithm}
+\caption{Iterative Solution for $p = \infty$ (Linear Programming Problem)}
+\label{alg:euclid}
+\begin{algorithmic}[1]
+\State \textbf{input:} $\; \bm{x}, f(\bm{x}), \bm{\eta}, N$
+\State \textbf{output:} $\; \bm{\eta}$
+\State \textbf{initialize:} $\bm{\tilde{x}} \gets \bm{x}$
+\For{$i \gets 1, ..., N$}
+	\State $ \bm{\eta} \gets \frac{\bm{\epsilon}}{N} \; \text{sign}(\nabla \mcl{L}(\bm{\tilde{x}})) $
+	\State $ \bm{\tilde{x}} \gets \bm{\tilde{x}} + \bm{\eta} $
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+
+% Quadratic %
+
+\subsection{Quadratic Programming Problem}\label{sec:section}
+
+
+Similar to the loss function,
+$ f(\bm{x}) $ can be generally regarded as a non-convex and non-linear function. But since $ \lvert\lvert \bm{\eta} \rvert\rvert_p \leq \epsilon $,
+the function can be approximated using a taylor expansion in close proximity to $\bm{x}$. This results in the following
+quadratic programming problem.
+
+
+\begin{equation}
+\begin{aligned}
+\mcl{L}(\bm{x} + \bm{\eta}) &= \lvert\lvert \bm{y} - f(\bm{x} + \bm{\eta}) \rvert\rvert^2_2 \\[10pt]
+&= (\bm{y} - f(\bm{x} + \bm{\eta}))^T(\bm{y} - f(\bm{x} + \bm{\eta})) \\[10pt]
+&= \bm{y}^T\bm{y} - f(\bm{x} + \bm{\eta})^T\bm{y} - \bm{y}^T f(\bm{x} + \bm{\eta}) + f(\bm{x} + \bm{\eta})^Tf(\bm{x} + \bm{\eta}) \\[10pt]
+&= \lvert\lvert \bm{y} \rvert\rvert^2_2 - 2 \bm{y}^T f(\bm{x} + \bm{\eta}) + \lvert\lvert f(\bm{x} + \bm{\eta}) \rvert\rvert^2_2 \\[10pt]
+&\approx \lvert\lvert \bm{y} \rvert\rvert^2_2 - 2 \bm{y}^T (f(\bm{x}) + \bm{J}_f(\bm{x})\bm{\eta}) + \lvert\lvert f(\bm{x}) + \bm{J}_f(\bm{x}) \bm{\eta} \rvert\rvert^2_2 \\[10pt]
+&= \lvert\lvert \bm{y} \rvert\rvert^2_2 - 2 \bm{y}^T (f(\bm{x}) + \bm{J}_f(\bm{x})\bm{\eta}) + (f(\bm{x}) + \bm{J}_f(\bm{x})\bm{\eta})^T(f(\bm{x}) + \bm{J}_f(\bm{x})\bm{\eta}) \\[10pt]
+&= \cancel{ \lvert\lvert \bm{y} \rvert\rvert^2_2 } - 2 \bm{y}^T ( \cancel{ f(\bm{x}) } + \bm{J}_f(\bm{x})\bm{\eta})) + \cancel{  \lvert\lvert f(\bm{x}) \rvert\rvert^2_2 } + 2 \bm{\eta}^T \bm{J}_f(\bm{x})^Tf(\bm{x}) + \lvert\lvert \bm{J}_f(\bm{x}+\bm{\eta}) \rvert\rvert^2_2 \\[10pt]
+&= 2 \bm{\eta}^T \bm{J}_f(\bm{x})^T (f(\bm{x}) - \bm{y}) + \lvert\lvert \bm{J}_f(\bm{x}) \bm{\eta} \rvert\rvert^2_2 \\
+\end{aligned}
+\label{taylorquadratic}
+\end{equation}
+
+\begingroup
+The simplified convex problem for $\mcl{L}$ is further simplified by using $\bm{y} \approx f(\bm{x})$.
+Therefore, the problem gets simpliefied to the following form.
+\endgroup
+
+\begin{equation}
+\begin{aligned}
+	\max_{\bm{\eta}} \; \lvert\lvert \bm{J}_f(\bm{x}) \bm{\eta} \rvert\rvert_2^2 \quad s.t. \quad \lvert\lvert \bm{\eta} \rvert\rvert_p \leq \epsilon
+\end{aligned}
+\label{quadintro}
+\end{equation}
+
+\begingroup
+This problem leads to a convex quadratic bowl maximization under a $l_p$-ball constraint. The maximization problem \ref{quadintro} can be reformulated using
+\endgroup
+
+\begin{equation}
+\begin{aligned}
+	\lvert\lvert \bm{J}_f(\bm{x}) \bm{\eta} \rvert\rvert_2 = \epsilon \; \lvert\lvert \bm{J}_f(\bm{x}) \frac{\bm{\eta}}{\epsilon} \rvert\rvert_2
+\end{aligned}
+\label{quadfollow}
+\end{equation}
+
+\begingroup
+Due to $\lvert\lvert \frac{\bm{\eta}}{\epsilon} \rvert\rvert_p \leq 1$, the problem can be solved using operator norms. If
+$\bm{M}: V \rightarrow W$ is a linear transformation the operator norm is given by the subsequent term.
+\endgroup
+
+\begin{equation}
+\begin{aligned}
+	\lvert\lvert \bm{M} \rvert\rvert_{V \rightarrow W} = \sup_{\bm{v} \in V \backslash \{0\}} \frac{\lvert\lvert \bm{M v} \rvert\rvert_W}{\lvert\lvert \bm{v} \rvert\rvert_V} = \sup_{\lvert\lvert \bm{v} \rvert\rvert_V \leq 1} \lvert\lvert \bm{M v}  \rvert\rvert_W
+\end{aligned}
+\label{operatornorm}
+\end{equation}
+
+\begingroup
+Since $\lvert\lvert \bm{\eta} \rvert\rvert_p = \epsilon$ is the upper bound, \ref{quadfollow} can be estimated through $\epsilon \; \lvert\lvert \bm{J}_f(\bm{x}) \frac{\bm{\eta}}{\epsilon} \rvert\rvert_2 \leq \epsilon \; \lvert\lvert \bm{J}_f(\bm{x}) \rvert\rvert_{p \rightarrow 2}$.
+For $l_1$ and $l_2$ this operator norm has a closed-form solution.
+
+For $l_2$ a solution is provided by a theorem from Ky Fan, 1950 \cite{KyFan, BigData}. If $\bm{M} \in \mathbb{R}^{n \times n}$ is a symmetric matrix with sorted
+eigenvalues $\lambda_n (\bm{M}) \leq ... \leq \lambda_1 (\bm{M})$ and $\bm{v} \in \mathbb{R}^n$ a vector. The solution is given by
+\endgroup
+
+%% kyfan theorem l2 optimization
+
+\begin{equation}
+\begin{aligned}
+	\max_{\lvert\lvert \bm{v} \rvert\rvert = 1, \bm{v} \in \mathbb{R}^n} \bm{v^T M v} = \lambda_{max} (\bm{M})
+\end{aligned}
+\label{kyfanmax}
+\end{equation}
+
+
+\begingroup
+Therefore, to maximize \ref{quadfollow} the eigenvector $\bm{v}_{max}$ of $\bm{J}_f(\bm{x})^T \bm{J}_f(\bm{x})$ needs to be found, which corresponds to
+the largest eigenvalue. Then, the optimal solution to \ref{quadintro} is given by $\bm{\eta} = \pm \epsilon \; \bm{v}_{max}$ \cite{BigData}.
+\endgroup
+
+
+%%%% PROOF KY FAN
+
+\begingroup
+$\bm{Proof.}$ Suppose that $\bm{u}_1, ..., \bm{u}_n$ are eigenvectors of $\bm{M}$ corresponding to $\lambda_1(\bm{M}) \geq ... \geq \lambda_n(\bm{M})$
+and $\bm{U} = [\bm{u}_1, ..., \bm{u}_n]$. Every vector $\bm{v}$ can be written as $\bm{v} = a_1 \bm{u}_1 + ... + a_n \bm{u}_n = \bm{U} \bm{a}$ where
+$\bm{a} = [a_1, ..., a_n]^T$. We get to
+\endgroup
+
+\begin{equation}
+\begin{aligned}
+	\max_{\bm{v} \in \mathbb{R}^n, \bm{v}^T\bm{v}=1} \bm{v}^T \bm{M} \bm{v} &= \max_{\bm{a} \in \mathbb{R}^n, \bm{a}^T\bm{a}=1} \bm{a}^T\bm{U}^T \bm{M} \bm{U}\bm{a} \\
+	&=  \max_{\bm{a} \in \mathbb{R}^n, \bm{a}^T\bm{a}=1} \sum_{i=1}^n \lambda_i (\bm{M}) a_i^2 \leq \lambda_1 (\bm{M})
+\end{aligned}
+\label{kyfan_proof}
+\end{equation}
+
+$\blacksquare$
+
+%% l1 closed-form solution
+
+\begingroup
+For $p = 1$ a closed-form solution is provided by \ref{l1_norm_solution}. It can be assumed that the conditions from \ref{operatornorm} still apply.
+\endgroup
+
+\begin{equation}
+\begin{aligned}
+	\lvert\lvert \bm{M} \rvert\rvert_{1 \rightarrow 2} = \max_{k \in \{1, ..., n\}} \lvert\lvert \bm{m}_k \rvert\rvert_2
+\end{aligned}
+\label{l1_norm_solution}
+\end{equation}
+
+\begingroup
+$\bm{m}_k$ defines the $k$-th column vector of the matrix $\bm{M}$. This closed-form solution leads to
+\endgroup
+
+\begin{equation}
+\begin{aligned}
+	\epsilon \; \lvert\lvert \bm{J}_f(\bm{x}) \rvert\rvert_{1 \rightarrow 2} \leq \max_{k \in \{1, ..., n\}} \lvert\lvert \bm{J}_f(\bm{x})_k \rvert\rvert_2
+\end{aligned}
+\label{l1solution}
+\end{equation}
+
+\begingroup
+and
+\endgroup
+
+\begin{equation}
+\begin{aligned}
+	\bm{\eta} = \pm \epsilon \; \bm{e}_{k} \quad s.t. \quad k = \argmax_{k \in \{1, ..., n\}} \lvert\lvert \bm{J}_f(\bm{x}) \rvert\rvert_2
+\end{aligned}
+\label{l1final}
+\end{equation}
+
+
+%%%%% Proof l1
+$\bm{Proof.}$ It can be assumed that $\lvert\lvert \bm{v} \rvert\rvert_1 \leq 1$ and $\bm{M} \in \mathbb{R}^{n \times n}$. The column with
+the largest norm $\lvert\lvert \bm{m}_k \rvert\rvert_2$ is defined as $\bm{m}_{\alpha}$ with the corresponding scalar $\alpha$. The
+proof now follows an iterative procedure of finding an additonal column $\bm{m}_{\beta}$ that improves the solution.
+
+
+\begin{equation}
+\begin{aligned}
+	\lvert\lvert \bm{M v} \rvert\rvert_2^2 &= \lvert\lvert \alpha \bm{m}_{\alpha} + \beta \bm{m}_{\beta} \rvert\rvert_2^2
+	&\leq \alpha^2 \lvert\lvert \bm{m}_{\alpha} \rvert\rvert_2^2 + \beta^2 \lvert\lvert \bm{m}_{\beta} \rvert\rvert_2^2 \leq \lvert\lvert \bm{m}_{\alpha} \rvert\rvert_2^2
+\end{aligned}
+\label{l1_proof}
+\end{equation}
+
+$\blacksquare$
+
+\begingroup
+Intuitively, $\bm{\eta}$ needs to point into the same direction of the maximum of $\bm{J}_f(\bm{x})$ to optimally solve the maximization problem.
+For the quadratic programming problem, the closed-form solutions are provided below in a compact form. For $p = \infty$
+the problem is unfornuately NP-hard and can therefore not be solved without iterating through all the possible combinations. An
+overview of solutions to an operator norm problem is given by \autoref{operatorcompu}.
+\endgroup
+
+\begin{equation}
+\begin{aligned}
+p = 1: \quad &\bm{\eta} = \pm \epsilon \; \bm{e}_{k} \quad s.t. \quad k = \argmax_{k \in \{1, ..., n\}} \lvert\lvert \bm{J}_f(\bm{x}) \rvert\rvert_2 \\[20pt]
+p = 2: \quad &\bm{\eta} = \pm \epsilon \; \bm{v}_{max}
+\end{aligned}
+\label{quadraticclosedform}
+\end{equation}
+
+\begin{table}[]
+\centering
+\def\arraystretch{1.5}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+                                 & \multicolumn{4}{c|}{\textbf{Co-Domain}}                                                                                                                                                                                       \\ \hline
+                                 &      & $l_1$                                                                    & $l_2$                                                                    & $l_\infty$                                                       \\ \hline
+ 															 	 & $l_1$   & \begin{tabular}[c]{@{}c@{}}Maximum $l_1$-norm\\ of a column\end{tabular} & \begin{tabular}[c]{@{}c@{}}Maximum $l_2$-norm\\ of a column\end{tabular} & \begin{tabular}[c]{@{}c@{}}Maximum $l_\infty$-norm\\ of a column\end{tabular} \\ \cline{2-5}
+\multirow{1}{*}{\textbf{Domain}} & $l_2$   & NP-hard                                                               & \begin{tabular}[c]{@{}c@{}}Maximum singular\\ value\end{tabular}      & \begin{tabular}[c]{@{}c@{}}Maximum $l_2$-norm\\ of a row\end{tabular}      \\ \cline{2-5}
+                                 & $l_\infty$ & NP-hard                                                            & NP-hard                                                               & \begin{tabular}[c]{@{}c@{}}Maximum $l_1$-norm\\ of a row\end{tabular}      \\ \hline
+\end{tabular}
+
+\caption{Operator Norm Computability}
+\label{operatorcompu}
+
+\end{table}
+
+%% Single Pixel attacks %%
+
+\section{Single Subset Attacks}\label{sec:section}
+
+\begingroup
+Single Pixel Attacks like \cite{SingleClassification} have proven to be successful in fooling various DNNs
+for classification tasks. The attacker's goal in this scenario is to find a single pixel, which can be modified,
+to create a highly disturbed output. The definition of this attack varies in various research
+papers. For instance, Su et al. \cite{SingleClassification} suggests to modifiy only one color channel and to set
+other dimensions to zero. In the following, we will attempt to generalize this approach using a greedy approach. The entire
+set of pixel information $\mcl{M} = \{1, ..., M\}$ can be devided into $\mcl{S} = \{\mcl{S}_1, ..., \mcl{S}_S\}$
+subsets. Each subset represents the color channels from one pixel. The size is determined through $Z = \frac{M}{S}$. Pixels in
+a subset are described using $\mcl{S}_S = \{i^1_S, ..., i^Z_S\}$. To count the number of changed subsets, the
+$\lvert\lvert \; \cdot \; \rvert\rvert_{0, \mcl{S}}$ zero-$\mcl{S}$ norm is introduced. For $\lvert\lvert \bm{\eta} \rvert\rvert_{0, \mcl{S}}$ this norm counts the number of modified channels.
+If an attacker only attempts to change a single pixel the problem can be formulated in the following way:
+\endgroup
+
+\begin{equation}
+\begin{aligned}
+	\max_{\bm{\eta}} \mcl{L}(\bm{x} + \bm{\eta}) \quad s.t. \quad \lvert\lvert \bm{\eta} \rvert\rvert_{\infty} \leq \epsilon \;, \; \lvert\lvert \bm{\eta} \rvert\rvert_{0, \mcl{S}} = 1
+\end{aligned}
+\label{singlesubsetgeneral}
+\end{equation}
+
+
+\subsection{Single Subset Attack for the Linear Problem}\label{06_single_linear}
+
+\begingroup
+As shown in \ref{maxlinopt} the maximization problem in \ref{singlesubsetgeneral} can be approximated using a taylor expansion. The
+resulting linear programming problem is shown in \ref{singlesubsetlinear}. Since only one subset is supposed to be modified the
+problem can be rewritten as \ref{singlesubsetrewrite}.
+\endgroup
+
+\begin{equation}
+\begin{aligned}
+	\max_{\bm{\eta}} \nabla \mcl{L}(\bm{x})^T \bm{\eta} \quad s.t. \quad \lvert\lvert \bm{\eta} \rvert\rvert_{\infty} \leq \epsilon \;, \; \lvert\lvert \bm{\eta} \rvert\rvert_{0, \mcl{S}} = 1
+\end{aligned}
+\label{singlesubsetlinear}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+	\bm{\eta_{s}} = \argmax_{\bm{\eta}} \nabla \mcl{L}(\bm{x})^T \bm{\eta} \quad s.t. \quad \lvert\lvert \bm{\eta} \rvert\rvert_{\infty} \leq \epsilon \;, \; (\bm{\eta})_{i_s^z} = 0 \; \forall i_s^z \not\in \mcl{S}_{\mcl{S}}
+\end{aligned}
+\label{singlesubsetrewrite}
+\end{equation}
+
+\begingroup
+This problem is maximized by choosing a subset for $\bm{\eta}$ that has the largest norm $\lvert\lvert \nabla \mcl{L}(\bm{x}) \rvert\rvert_{\infty} $.
+Afterwards, $\bm{\eta}$ is determined by the direction of $\nabla \mcl{L}(\bm{x})$ in the chosen subset. The problem is further constrained by
+$\lvert\lvert \bm{\eta} \rvert\rvert_{\infty} \leq \epsilon$. Therefore, the optimal solution lies on the edges of
+the hypercube $\lvert\lvert \bm{\eta} \rvert\rvert_{\infty} = \epsilon$. This geometric interpretation leads to the following closed-form solution.
+\endgroup
+
+
+\begin{equation}
+\begin{aligned}
+	\bm{\eta^{*}} = \bm{\eta_{s^*}} \quad w. \quad s^{*} = \argmax_s \sum_{z=1}^{Z} \lvert \nabla (\mcl{L}(\bm{x}))_{i^z_s} \rvert \; , \; \bm{\eta}_s = \epsilon \sum^{Z}_{z=1} \text{sign}((\nabla \mcl{L}(\bm{x}))_{i_s^z}) \bm{e}_{i^z_s}
+\end{aligned}
+\label{singlelinearsolution}
+\end{equation}
+
+\begingroup
+$\bm{\eta_s}$ determines the optimal subset perturbation. A single subset is then selected based on the maximum change to the cost function $\mcl{L}$.
+The pseudocode for the linear subset attack is provided by Algorithm 2. For multiple pixels the routine can be run iteratively with $\bm{P}$
+holding all used pixels after each iteration.
+\endgroup
+
+
+\begin{algorithm}[ht]
+\caption{Single Subset Attack (Linear Solution)}
+\label{alg:single_linear}
+\begin{algorithmic}[1]
+\State \textbf{input:} $h_{opt}, w_{opt}, \theta$
+\State \textbf{output:} $\bm{P}, \bm{\eta}_{opt}$
+\For{$h \gets 1, ..., H$}
+	\For{$w \gets 1, ..., W$}
+		\State $\phi_s \gets \sum_{z=1}^Z \lvert \nabla \mcl{L}_{i_s^z} \rvert$
+		\If{$\phi_s > \theta \; and \; (h, w) \not\in \bm{P}$}
+			\State $h_{opt}, w_{opt}, \bm{\eta}_{opt} \gets h, w, \epsilon \cdot \text{sign}(\nabla \mcl{L}_s)$
+			\State $\theta \gets \phi_s$
+		\EndIf
+	\EndFor
+\EndFor
+\State $\bm{P} \gets (h_{opt}, w_{opt})$
+\end{algorithmic}
+\end{algorithm}
+
+
+\subsection{Single Subset Attack for the Quadratic Problem}\label{06_single_quadratic}
+
+
+\begingroup
+In the same manner as described in \autoref{06_single_linear}, a solution can be found for the quadratic problem.
+First of all, the initial problem \ref{06_single_quadratic_problem} is simplified by fixing the subset modified by an attacker
+again to $\bm{\eta}_s$.
+\endgroup
+
+
+\begin{equation}
+\begin{aligned}
+	\max_{\bm{\eta}} \lvert\lvert \bm{J}_f(\bm{x}) \bm{\eta} \rvert\rvert_2^2 \quad s.t. \quad \lvert\lvert \bm{\eta} \rvert\rvert_{\infty} \leq \epsilon \; , \; \lvert\lvert \bm{\eta} \rvert\rvert_{0,\mcl{S}} = 1
+\end{aligned}
+\label{06_single_quadratic_problem}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+	\bm{\eta}_s = \argmax_{\eta} \lvert\lvert \bm{J}_f(\bm{x}) \bm{\eta} \rvert\rvert_2^2 \quad s.t. \quad \lvert\lvert \bm{\eta} \rvert\rvert_{\infty} \leq \epsilon \;, \; (\bm{\eta})_{i_s^z} = 0 \; \forall i_s^z \not\in \mcl{S}_{\mcl{S}}
+\end{aligned}
+\label{06_single_quadratic_problem_rewrite}
+\end{equation}
+
+\begingroup
+In contrast to the linear subset attack, there is not a closed-form solution for the quadratic problem.
+Instead it is possible to reduce the complexity by finding a suboptimal solution.
+
+Geometrically, \ref{06_single_quadratic_problem_rewrite} can be viewed
+as the maximization of a quadratic bowl over a hypercube. By limiting the solution space, we get $\bm{\eta}_s = \epsilon \sum_{z=1}^{Z} \rho_{i_s^z}^* \bm{e}_{i^z_s}$
+with $\bm{\rho^*_s} = (\rho_{i_s^1}, ..., \rho_{i_s^z})^T \in \{ -1, +1\}^Z $. Therefore, foreach subset the problem gets rewritten to \ref{06_single_quadratic_solution_rho_1} and \ref{06_single_quadratic_solution_rho_2}.
+\endgroup
+
+\begin{equation}
+\begin{aligned}
+	\bm{\eta}^* = \bm{\eta}_{s*} \quad w. \quad s^* = \argmax_s \lvert\lvert \bm{J}_f(\bm{x}) \bm{\eta}_s \rvert\rvert_2^2 \; , \; \bm{\eta}_s = \epsilon \sum_{z=1}^{Z} \rho_{i_s^z}^* \bm{e}_{i^z_s}
+\end{aligned}
+\label{06_single_quadratic_solution_rho_1}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+	\bm{\rho}_s^* = \argmax_{\rho_s \in \{-1, +1\}^z} \lvert\lvert \bm{J}_f(\bm{x})(\epsilon \sum_{z=1}^{Z} \rho_{i_s^z} \bm{e}_{i_s^z}) \rvert\rvert_2^2 = \argmax_{\bm{\rho}_s \in \{-1, +1\}^Z} \sum_{z=1}^Z \sum_{w=1}^Z \rho_{i_s^z} \rho_{i_s^w} \bm{J}_{i_s^z}^T \bm{J}_{i_s^w}
+\end{aligned}
+\label{06_single_quadratic_solution_rho_2}
+\end{equation}
+
+\begingroup
+To find a solution to this NP-hard problem, $\bm{\eta}_s^*$ can be approximated using a greedy method. This is achieved by sorting $\lvert\lvert \bm{J}_{i_s^1} \rvert\rvert_2 \geq ... \geq \lvert\lvert \bm{J}_{i_s^z} \rvert\rvert_2$ and setting $\bm{\rho}_{i_s^1}^* = 1$.
+Afterwards, all $\rho_{i_s^z}^*$ are calculated recursively in \ref{06_single_quadratic_recursive} using $\rho_{i_1^s}^*$ as a starting point.
+\endgroup
+
+\begin{equation}
+\begin{aligned}
+	\rho_{i_s^z}^* = \text{sign}((\sum_{j=1}^{z-1} \rho_{i_s^j}^* \bm{J}_{i_s^z})^T \bm{J}_{i_s^z}) \quad \forall z = 2, ..., Z
+\end{aligned}
+\label{06_single_quadratic_recursive}
+\end{equation}
+
+
+\begingroup
+The entire iterative procedure is similar to the solution of Goemans and Williamson to the MacCut problem \cite{MaxCut}. Therefore, the given solution is also limited by the same approximation factor $R = 0.87856$ with $\lvert ALG \rvert \geq R \cdot \lvert OPT \rvert$.
+For an image with three color channels ($Z=3$), $\rho_{i_s^z}^*$ looks the following way.
+\endgroup
+
+\begin{equation}
+\begin{aligned}
+z = 1: \quad & \rho_{i_s^1}^* = 1 \\[10pt]
+z = 2: \quad & \rho_{i_s^2}^* = \text{sign}( (\rho_{i_s^1}^* \bm{J}_{i_s^1})^T \bm{J}_{i_s^2} ) \\[10pt]
+z = 3: \quad & \rho_{i_s^3}^* = \text{sign}( (\rho_{i_s^1}^* \bm{J}_{i_s^1} + \rho_{i_s^2}^* \bm{J}_{i_s^2})^T \bm{J}_{i_s^3} ) \\[10pt]
+\end{aligned}
+\label{rho_example_z_3}
+\end{equation}
+
+
+\begin{algorithm}[ht]
+
+\caption{Single Subset Attack (Quadratic Solution)}
+\label{alg:single_quadratic}
+\begin{algorithmic}[1]
+\State $\bm{P}, \bm{J}_{norm} \gets None, 0$
+\For{$h \gets 1, ..., H$}
+	\For{$w \gets 1, ..., W$}
+		\For{$d \gets 1, ..., D$}
+			\State $n_d \gets \lvert\lvert \bm{J}_{i_s^d} \rvert\rvert_2$
+		\EndFor
+		\State $\rho_{i_s^1}^*, \hat{\bm{J}}, \bm{I} \gets 1, \bm{J}_{i_s^1}, reverse(argsort(n_1, ..., n_D))$
+		\If{$D > 0$}
+			\For{$k \gets 2, ..., D$}
+				\State $\rho_{i_s^k}^* \gets \text{sign}( (\sum_{j=1}^{k-1} \rho_{i_s^{\bm{I}_k}}^* \bm{J}_{i_s^j})^T \bm{J}_{i_s^{\bm{I}_k}} )$
+				\State $\hat{\bm{J}} \gets \hat{\bm{J}} + \rho_{i_s^{\bm{I}_k}}^* \cdot \bm{J}_{i_s^{\bm{I}_k}}$
+			\EndFor
+		\EndIf
+		\If{$\lvert\lvert \sum_{j=1}^{k} \rho_{i_s^k}^* \bm{J}_{i_s^j} \rvert\rvert_2 > \bm{J}_{norm}$ and $(h, w) \not\in \bm{P}$}
+			\State $h_{opt}, w_{opt}, \rho_{opt} \gets h, w, \rho^*$
+			\State $\bm{J}_{norm} \gets \lvert\lvert \sum_{j=1}^{k} \rho_{i_s^k}^* \bm{J}_{i_s^j} \rvert\rvert_2$
+		\EndIf
+	\EndFor
+\EndFor
+\State $\bm{P}, \bm{\eta}_s^* \gets (h_{opt}, w_{opt}), \epsilon \cdot \rho_{opt}$
+
+\end{algorithmic}
+\end{algorithm}

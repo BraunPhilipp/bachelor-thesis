@@ -1,0 +1,138 @@
+%!TEX root = thesis.tex
+%******************************************************************************
+% Some definitions
+%******************************************************************************
+
+% Command for generating a specific amount of whitespace
+\newlength{\drop}
+\drop=0.05\textheight % Define the command as 10% of the total text height
+
+% Format of emphasized title line
+\definecolor{rwthblue}{RGB}{37,83,161}
+
+\def\emphtitleline{\huge\color{rwthblue}}
+\def\nonemphtitleline{\large}
+
+% Two lines at top and bottom of page
+\def\twolinestop{ %
+% \rule{\textwidth}{1pt}\par % Thick horizontal line
+\vspace{2pt}\vspace{-\baselineskip} % Whitespace between lines
+\rule{\textwidth}{0.4pt}\par % Thin horizontal line
+}
+\def\twolinesbottom{ %
+\rule{\textwidth}{0.4pt}\par % Thick horizontal line
+\vspace{2pt}\vspace{-\baselineskip} % Whitespace between lines
+% \rule{\textwidth}{1pt}\par % Thin horizontal line
+}
+
+% The font of the title
+% Standard serif
+\ifdefined\titlefontStandardSerif
+\def\titlefont{\normalfont}
+\fi
+% Standard san serif
+\ifdefined\titlefontStandardSanSerif
+\def\titlefont{\sffamily} %%% used font
+\fi
+% Special serif font. Name: Pacioli
+\ifdefined\titlefontSpecial
+\def\titlefont{\usefont{\encodingdefault}{cpc}{m}{n}\selectfont}
+\fi
+
+%******************************************************************************
+% The real title page
+%******************************************************************************
+
+\begin{titlepage}
+\vspace*{-30mm}
+\begin{flushright}
+\includegraphics{figures/rwth_ti_de_rgb.jpg}
+\end{flushright}
+\centering
+%\twolinestop
+\vspace{1.5\drop} % Whitespace between the top lines and title
+
+
+\begin{center}
+{ \titlefont\renewcommand{\baselinestretch}{1.70}\normalsize
+{\emphtitleline \textbf{\titlelineA} } \\[0.7\baselineskip]
+{\nonemphtitleline \titlelineB} \\
+}
+
+\vspace{1.2\drop} % Whitespace between the title and short horizontal line
+%\rule{0.5\textwidth}{0.4pt}\par % Short horizontal line under the title
+%\vspace{0.1\drop} % Whitespace between the thin horizontal line and the author name
+
+\makeatletter
+{\Large \titlefont{\@author}}\par % Author name
+\makeatother
+
+\end{center}
+
+\vfill % Whitespace between the author name and publisher text
+\vspace*{20mm}
+
+%\includegraphics{figures/Ti_black}\\[0.5\baselineskip] % Include a department/university logo
+{\large \titlefont{Lehrstuhl für Theoretische Informationstechnik}}\\[0.5\baselineskip] % Institute
+{\large \titlefont{RWTH Aachen University}}\par % Uni
+%
+%\vspace*{0.2\drop} % Whitespace
+%
+% \twolinesbottom
+\end{titlepage}
+%
+\cleardoublepage
+
+%******************************************************************************
+% A second title page containing more information
+%******************************************************************************
+
+\thispagestyle{empty}
+\begingroup
+\vspace*{-30mm}
+\begin{flushright}
+\includegraphics{figures/rwth_ti_de_rgb.jpg}
+\end{flushright}
+\centering
+% \twolinestop
+\vspace{1.5\drop} % Whitespace between the top lines and title
+
+\begin{center}
+{ \titlefont\renewcommand{\baselinestretch}{1.70}\normalsize
+{\emphtitleline \textbf{\titlelineA} } \\[0.7\baselineskip]
+{\nonemphtitleline \titlelineB} \\
+}
+
+\vspace{1.2\drop} % Whitespace between the title and short horizontal line
+%\rule{0.5\textwidth}{0.4pt}\par % Short horizontal line under the title
+%\vspace{0.1\drop} % Whitespace between the thin horizontal line and the author name
+
+\makeatletter
+{\Large \titlefont{\@author}}\par % Author name
+\makeatother
+
+\end{center}
+
+\vspace{2\drop}
+
+\begin{center}
+\textsf{Bachelorarbeit eingereicht an der Fakultät für} \\
+\textsf{Elektrotechnik und Informationstechnik,}\\
+\textsf{RWTH Aachen Universität}\\[0.5\baselineskip]
+\textsf{geprüft von Univ.-Prof. Dr. rer. nat. Rudolf Mathar}\\[0.5\baselineskip]
+%am \textsf{\today}\\[0.5\baselineskip] %\textsf{\monthword{\month}~\the\year}
+\end{center}
+
+\vfill % Whitespace between the author name and publisher text
+\vspace*{20mm}
+%\includegraphics{figures/Ti_black}\\[0.5\baselineskip] % Include a department/university logo
+{\large \titlefont{Lehrstuhl für Theoretische Informationstechnik}}\\[0.5\baselineskip] % Institute
+{\large \titlefont{RWTH Aachen University}}\par % Uni
+
+%
+%\vspace*{0.2\drop} % Whitespace
+%
+% \twolinesbottom
+\endgroup
+%
+\cleardoublepage

@@ -1,0 +1,500 @@
+%
+% This is rwthlogo.sty
+% a LaTeX package to generate the famous RWTH logo
+% (see: http://www9.rwth-aachen.de/go/id/lnf/)
+%
+% Copyright 2013 by Ansgar Pflipsen
+%
+% This file may be distributed and/or modified
+% 1. under the LaTeX Project Public License and/or
+% 2. under the GNU Public License and/or
+% 3. under the WTF Public License.
+%
+% short usage summary:
+%    \RWTH{}
+%    \RWTHAACHEN{}
+%    \RWTHAACHENUNIVERSITY{}
+%    \RWTH*****[<options>]{}
+% 
+% options are:
+%    width=dimension    % f.e. 1cm 22mm 2em 4ex 1in ...
+%    height=dimension   % ... 0.3\textwidth
+%    margin=dimension  
+%    padding=dimension
+%    color=colorvalue   % main color =rwthblue
+%    accolor=colorvalue % alternate color =HKS44 50%
+%    bgcolor=colorvalue % background (def=transparent)
+%    <other>  see texdoc adjustbox
+%
+% IMPORTANT NOTICE
+%
+% Any modified versions of this file must be renamed
+% with new filenames distinct from rwthlogo.sty or
+% kept inside the current working directory. texmf
+% installation is not recommended bevore version 1.0.
+%
+% All bugs, modifications, extensions and wishlists
+% belongs to:
+%    ansgar.pflipsen@ti.rwth-aachen.de
+%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{rwthlogo}[2013/04/20 v0.9 BETA]
+\RequirePackage{adjustbox}
+\RequirePackage{etoolbox}
+\RequirePackage[cmyk]{xcolor}
+\RequirePackage{tikz}
+\ProcessOptions\relax
+%\DeclareOptionX is equivalent to \define@key{mypackage.sty}{parindent}[20pt]{\setlength\parindent{#1}}. –
+%\DeclareOptionX{parindent}[20pt]{\setlength\parindent{#1}} 
+%\ExecuteOptionsX{parindent=0pt}
+%\ProcessOptionsX\relax 
+
+%\newcommand{\ifz}[3]{%
+%	\ifthenelse{\isempty{#1}}{#2}{#3}%
+%	}
+%\newcommand{\dv}[2]{%
+%	\ifthenelse{\isempty{#1}}{#2}{#1}%
+%	}
+
+%\definecolor{grey}{rgb}{.7,.705,.71}
+%\definecolor{Ti_blue}{rgb}{.7,.705,.71}
+%\definecolor{ti_gray}{rgb}{.8,.805,.81}
+%\definecolor{ti_black}{rgb}{.8,.805,.81}
+%\definecolor{ti_dotcolor}{rgb}{.99,.77,.55}
+%\definecolor{rwth_dblau}{rgb}{0,0.498039,1}
+%\definecolor{rwth_hblau}{rgb}{0.498039,0.74902,1}
+%\definecolor{rwth_dblau}{HTML}{0067A6} 
+%\definecolor{rwth_hblau}{HTML}{779EC8}
+%\definecolor{rwth_dblau}{HTML}{00549F}
+%\definecolor{rwth_hblau}{HTML}{8EBAE5}
+\definecolor{rwthblau}{cmyk}{1,0.5,0,0}
+\definecolor{rwthac}{cmyk}{0.45,0.14,0,0}
+
+\newcommand\tilogo[1][scale=0.0139ex,line width=0pt]{% 
+	\begin{tikzpicture}[#1]%[ line width=0 ]%[rounded corners,ultra thick]
+		\begin{scope}
+			\clip (0,0) -- (3.5+0.7071,0) -- (3.5+0.7071,3.2-0.7071) arc(315:135:1/1) -- (0,3.2+0.7071) -- (0,0);
+			\filldraw[color=ti_black] (0,2.5) rectangle +(4,1) (1,0) rectangle +(1,3) (3,0) rectangle +(1,2.5);
+		\end{scope}
+		\fill[color=ti_dotcolor] (3.5,3.2) ellipse(.7 and .7);
+	\end{tikzpicture}%
+	}
+
+\define@cmdkey[rwth]{logo}[@rwth@logo@]{color}{}
+\define@cmdkey[rwth]{logo}[@rwth@logo@]{accolor}{}
+\define@cmdkey[rwth]{logo}[@rwth@logo@]{width}{}
+\define@cmdkey[rwth]{logo}[@rwth@logo@]{height}{}
+
+\newcommand*\call@rm[2][]{%
+	% #1 => macro to be called
+	% #3 => aditional options
+	\expandafter#2\expandafter{\detokenize\expandafter{\XKV@rm},#1}%
+	}
+
+% Command \RWTH[options]{}
+%
+% Description:
+%
+% The RWTH logo is generated with CDs default colors on transparent
+% background in the current font height......
+%
+% Examples:
+%
+% bla bla bla at \RWTH{} 
+
+\newcommand*\RWTH[2][]{%
+	\def\@rwth@logo@color{rwthblau}%
+	\def\@rwth@logo@accolor{rwthac}%
+	\def\@rwth@logo@width{}%
+	\def\@rwth@logo@height{}%
+	\setkeys*[rwth]{logo}{#1}%
+	\def\temp{}%\adjustboxset*{}%
+	\ifcsempty{@rwth@logo@height}{}{\appto\temp{height=\@rwth@logo@height,}}%
+	\ifcsempty{@rwth@logo@width}{}{\appto\temp{width=\@rwth@logo@width,}}%
+	\ifcsempty{temp}{\appto\temp{height=1.02\fontcharht\font`E,}}{}%
+	\eappto\temp{\XKV@rm}%
+	\expandafter\adjustbox\expandafter{\temp}{%
+	\begin{tikzpicture}[baseline=1.228cm]%
+	\begin{pgfscope}
+	\rwth@clip{0.027cm}{1.208cm}{4.190cm}{2.337cm}
+	\rwth@logo{\@rwth@logo@color}{\@rwth@logo@accolor}
+	\end{pgfscope}
+	\end{tikzpicture}%
+	}%
+	\ifx\\#2\\\else%
+	%\appto\temp{,stack=l,margin=0.07\height}%
+	\appto\temp{,stack=l}%
+	\expandafter\adjustbox\expandafter{\temp}{%
+	\usefont{\encodingdefault}{phv}{bc}{n}\selectfont\color{rwthblau}#2}%
+	\fi%
+	}
+\newcommand*\RWTHAACHEN[2][]{%
+	\def\@rwth@logo@color{rwthblau}%
+	\def\@rwth@logo@accolor{rwthac}%
+	\def\@rwth@logo@width{}%
+	\def\@rwth@logo@height{}%
+	\setkeys*[rwth]{logo}{#1}%
+	\def\temp{}%
+	\ifcsempty{@rwth@logo@height}{}{\appto\temp{height=\@rwth@logo@height,}}%
+	\ifcsempty{@rwth@logo@width}{}{\appto\temp{width=\@rwth@logo@width,}}%
+	\ifcsempty{temp}{\appto\temp{height=1.02\fontcharht\font`E,}}{}%
+	\eappto\temp{\XKV@rm}%
+	\expandafter\adjustbox\expandafter{\temp}{%
+	\begin{tikzpicture}[baseline=1.228cm]
+	\begin{pgfscope}
+	\rwth@clip{0.027cm}{1.208cm}{8.611cm}{2.337cm}
+	\rwth@logo{\@rwth@logo@color}{\@rwth@logo@accolor}
+	\end{pgfscope}
+	\end{tikzpicture}%
+	}%
+	}
+
+\newcommand*\RWTHUNIVERSITY[2][]{\RWTHAACHENUNIVERSITY[#1]{#2}}
+\newcommand*\RWTHAACHENUNIVERSITY[2][]{%
+	\def\@rwth@logo@color{rwthblau}%
+	\def\@rwth@logo@accolor{rwthac}%
+	\def\@rwth@logo@width{}%
+	\def\@rwth@logo@height{}%
+	\setkeys*[rwth]{logo}{#1}%
+	\def\temp{}%
+	\ifcsempty{@rwth@logo@height}{}{\appto\temp{height=\@rwth@logo@height,}}%
+	\ifcsempty{@rwth@logo@width}{}{\appto\temp{width=\@rwth@logo@width,}}%
+	\ifcsempty{temp}{\appto\temp{height=1.02\fontcharht\font`E,}}{}%
+	\eappto\temp{\XKV@rm}%
+	\expandafter\adjustbox\expandafter{\temp}{%
+	\begin{tikzpicture}[baseline=0.042cm]
+	\begin{pgfscope}
+	\rwth@clip{0.027cm}{0.019cm}{8.611cm}{2.337cm}
+	\rwth@logo{\@rwth@logo@color}{\@rwth@logo@accolor}
+	\end{pgfscope}
+	\end{tikzpicture}%
+	}%
+	}
+
+\newcommand\rwth@clip[4]{% left bottom right top
+	%\pgfpathmoveto{\pgfqpoint{0.027cm}{0.019cm}}%%bounding box
+	%\pgfpathlineto{\pgfqpoint{8.611cm}{0.019cm}}%%                     (8.611,2.337)
+	%\pgfpathlineto{\pgfqpoint{8.611cm}{2.337cm}}%%               
+	%\pgfpathlineto{\pgfqpoint{0.027cm}{2.337cm}}%%  (0.027,0.019)
+	% y-range UNIVERSITY-S	0.021-1.15
+	% y-range RWTHAACHEN-C  1.206-2.335  1.228-2.319 RWTH  1.227-2.314 AACHEN
+	\pgfpathmoveto{\pgfqpoint{#1}{#2}}
+	\pgfpathlineto{\pgfqpoint{#3}{#2}}
+	\pgfpathlineto{\pgfqpoint{#3}{#4}}
+	\pgfpathlineto{\pgfqpoint{#1}{#4}}
+	\pgfpathclose
+	\pgfusepath{clip}
+	}
+
+\newcommand\rwth@logo[2]{%[1][baseline=1.228cm]{%
+	%%FHPathName:BACKUP:Archiv:safe:Logokoffer:RWTH Aachen University
+	%%\begin{tikzpicture}[#1]
+	%%\ifx\value{rwth_dblau}\undefined\definecolor{rwth_dblau}{rgb}{0,0.498039,1}\fi
+	%%\ifx\value{rwth_hblau}\undefined\definecolor{rwth_hblau}{rgb}{0.498039,0.74902,1}\fi
+	%%\begin{pgfscope}
+	%\pgfpathmoveto{\pgfqpoint{0.027cm}{0.019cm}}%%bounding box
+	%\pgfpathlineto{\pgfqpoint{8.611cm}{0.019cm}}%%                     (8.611,2.337)
+	%\pgfpathlineto{\pgfqpoint{8.611cm}{2.337cm}}%%               
+	%\pgfpathlineto{\pgfqpoint{0.027cm}{2.337cm}}%%  (0.027,0.019)
+	% y-range UNIVERSITY-S	0.021-1.15
+	% y-range RWTHAACHEN-C  1.206-2.335  1.228-2.319 RWTH  1.227-2.314 AACHEN
+	\pgfsetstrokecolor{#1}\pgfsetfillcolor{#1}%% R
+	\pgfpathmoveto{\pgfqpoint{0.392cm}{1.228cm}}
+	\pgfpathlineto{\pgfqpoint{0.029cm}{1.228cm}}
+	\pgfpathlineto{\pgfqpoint{0.029cm}{2.312cm}}
+	\pgfpathcurveto{\pgfqpoint{0.029cm}{2.313cm}}{\pgfqpoint{0.029cm}{2.32cm}}{\pgfqpoint{0.029cm}{2.32cm}}
+	\pgfpathlineto{\pgfqpoint{0.624cm}{2.32cm}}
+	\pgfpathcurveto{\pgfqpoint{0.786cm}{2.32cm}}{\pgfqpoint{0.925cm}{2.215cm}}{\pgfqpoint{0.971cm}{2.076cm}}
+	\pgfpathcurveto{\pgfqpoint{1.013cm}{1.948cm}}{\pgfqpoint{0.977cm}{1.808cm}}{\pgfqpoint{0.882cm}{1.709cm}}
+	\pgfpathcurveto{\pgfqpoint{0.894cm}{1.675cm}}{\pgfqpoint{0.907cm}{1.648cm}}{\pgfqpoint{0.918cm}{1.617cm}}
+	\pgfpathcurveto{\pgfqpoint{0.945cm}{1.557cm}}{\pgfqpoint{0.969cm}{1.496cm}}{\pgfqpoint{0.995cm}{1.436cm}}
+	\pgfpathlineto{\pgfqpoint{1.082cm}{1.228cm}}
+	\pgfpathlineto{\pgfqpoint{0.713cm}{1.228cm}}
+	\pgfpathcurveto{\pgfqpoint{0.713cm}{1.228cm}}{\pgfqpoint{0.71cm}{1.237cm}}{\pgfqpoint{0.708cm}{1.24cm}}
+	\pgfpathcurveto{\pgfqpoint{0.693cm}{1.273cm}}{\pgfqpoint{0.68cm}{1.307cm}}{\pgfqpoint{0.665cm}{1.339cm}}
+	\pgfpathlineto{\pgfqpoint{0.577cm}{1.549cm}}
+	\pgfpathcurveto{\pgfqpoint{0.541cm}{1.634cm}}{\pgfqpoint{0.506cm}{1.714cm}}{\pgfqpoint{0.471cm}{1.799cm}}
+	\pgfpathcurveto{\pgfqpoint{0.515cm}{1.801cm}}{\pgfqpoint{0.548cm}{1.792cm}}{\pgfqpoint{0.59cm}{1.812cm}}
+	\pgfpathcurveto{\pgfqpoint{0.62cm}{1.827cm}}{\pgfqpoint{0.665cm}{1.863cm}}{\pgfqpoint{0.666cm}{1.933cm}}
+	\pgfpathcurveto{\pgfqpoint{0.665cm}{1.967cm}}{\pgfqpoint{0.655cm}{1.993cm}}{\pgfqpoint{0.632cm}{2.021cm}}
+	\pgfpathcurveto{\pgfqpoint{0.609cm}{2.046cm}}{\pgfqpoint{0.576cm}{2.065cm}}{\pgfqpoint{0.533cm}{2.065cm}}
+	\pgfpathcurveto{\pgfqpoint{0.533cm}{2.065cm}}{\pgfqpoint{0.392cm}{2.065cm}}{\pgfqpoint{0.392cm}{2.065cm}}
+	\pgfpathlineto{\pgfqpoint{0.392cm}{1.228cm}}
+	\pgfseteorule\pgfusepath{fill}\pgfsetnonzerorule
+	%\pgfsetstrokecolor{green}\pgfsetfillcolor{red}
+	\pgfpathmoveto{\pgfqpoint{4.186cm}{2.319cm}}%% WTH
+	\pgfpathlineto{\pgfqpoint{4.186cm}{1.228cm}}
+	\pgfpathlineto{\pgfqpoint{3.823cm}{1.228cm}}
+	\pgfpathlineto{\pgfqpoint{3.823cm}{1.673cm}}
+	\pgfpathlineto{\pgfqpoint{3.569cm}{1.673cm}}
+	\pgfpathlineto{\pgfqpoint{3.569cm}{1.228cm}}
+	\pgfpathcurveto{\pgfqpoint{3.503cm}{1.228cm}}{\pgfqpoint{3.432cm}{1.228cm}}{\pgfqpoint{3.366cm}{1.228cm}}
+	\pgfpathlineto{\pgfqpoint{3.205cm}{1.228cm}}
+	\pgfpathlineto{\pgfqpoint{3.205cm}{2.067cm}}
+	\pgfpathlineto{\pgfqpoint{2.951cm}{2.067cm}}
+	\pgfpathcurveto{\pgfqpoint{2.951cm}{2.059cm}}{\pgfqpoint{2.951cm}{2.051cm}}{\pgfqpoint{2.951cm}{2.04cm}}
+	\pgfpathlineto{\pgfqpoint{2.951cm}{1.228cm}}
+	\pgfpathlineto{\pgfqpoint{2.588cm}{1.228cm}}
+	\pgfpathlineto{\pgfqpoint{2.588cm}{2.067cm}}
+	\pgfpathlineto{\pgfqpoint{2.332cm}{2.067cm}}
+	\pgfpathlineto{\pgfqpoint{2.332cm}{1.228cm}}
+	\pgfpathlineto{\pgfqpoint{1.958cm}{1.228cm}}
+	\pgfpathcurveto{\pgfqpoint{1.892cm}{1.385cm}}{\pgfqpoint{1.824cm}{1.544cm}}{\pgfqpoint{1.76cm}{1.701cm}}
+	\pgfpathcurveto{\pgfqpoint{1.753cm}{1.734cm}}{\pgfqpoint{1.745cm}{1.767cm}}{\pgfqpoint{1.736cm}{1.799cm}}
+	\pgfpathlineto{\pgfqpoint{1.736cm}{1.228cm}}
+	\pgfpathlineto{\pgfqpoint{1.361cm}{1.228cm}}
+	\pgfpathcurveto{\pgfqpoint{1.286cm}{1.4cm}}{\pgfqpoint{1.215cm}{1.57cm}}{\pgfqpoint{1.141cm}{1.745cm}}
+	\pgfpathcurveto{\pgfqpoint{1.115cm}{1.806cm}}{\pgfqpoint{1.094cm}{1.855cm}}{\pgfqpoint{1.068cm}{1.919cm}}
+	\pgfpathlineto{\pgfqpoint{1.064cm}{1.927cm}}
+	\pgfpathlineto{\pgfqpoint{1.006cm}{2.062cm}}
+	\pgfpathlineto{\pgfqpoint{0.924cm}{2.256cm}}
+	\pgfpathcurveto{\pgfqpoint{0.916cm}{2.278cm}}{\pgfqpoint{0.905cm}{2.298cm}}{\pgfqpoint{0.897cm}{2.319cm}}
+	\pgfpathlineto{\pgfqpoint{1.271cm}{2.319cm}}
+	\pgfpathcurveto{\pgfqpoint{1.348cm}{2.133cm}}{\pgfqpoint{1.426cm}{1.948cm}}{\pgfqpoint{1.507cm}{1.764cm}}
+	\pgfpathlineto{\pgfqpoint{1.509cm}{1.76cm}}
+	\pgfpathcurveto{\pgfqpoint{1.506cm}{1.781cm}}{\pgfqpoint{1.499cm}{1.808cm}}{\pgfqpoint{1.496cm}{1.829cm}}
+	\pgfpathlineto{\pgfqpoint{1.496cm}{2.155cm}}
+	\pgfpathcurveto{\pgfqpoint{1.496cm}{2.207cm}}{\pgfqpoint{1.496cm}{2.266cm}}{\pgfqpoint{1.496cm}{2.319cm}}
+	\pgfpathlineto{\pgfqpoint{1.87cm}{2.319cm}}
+	\pgfpathcurveto{\pgfqpoint{1.875cm}{2.308cm}}{\pgfqpoint{1.878cm}{2.301cm}}{\pgfqpoint{1.881cm}{2.292cm}}
+	\pgfpathcurveto{\pgfqpoint{1.925cm}{2.188cm}}{\pgfqpoint{1.967cm}{2.086cm}}{\pgfqpoint{2.011cm}{1.983cm}}
+	\pgfpathlineto{\pgfqpoint{2.109cm}{1.76cm}}
+	\pgfpathcurveto{\pgfqpoint{2.107cm}{1.783cm}}{\pgfqpoint{2.102cm}{1.806cm}}{\pgfqpoint{2.099cm}{1.829cm}}
+	\pgfpathlineto{\pgfqpoint{2.099cm}{2.319cm}}
+	\pgfpathlineto{\pgfqpoint{3.569cm}{2.319cm}}
+	\pgfpathlineto{\pgfqpoint{3.569cm}{1.925cm}}
+	\pgfpathcurveto{\pgfqpoint{3.569cm}{1.925cm}}{\pgfqpoint{3.58cm}{1.925cm}}{\pgfqpoint{3.586cm}{1.925cm}}
+	\pgfpathlineto{\pgfqpoint{3.823cm}{1.925cm}}
+	\pgfpathlineto{\pgfqpoint{3.823cm}{2.319cm}}
+	\pgfpathcurveto{\pgfqpoint{3.823cm}{2.319cm}}{\pgfqpoint{3.949cm}{2.319cm}}{\pgfqpoint{4.012cm}{2.319cm}}
+	\pgfpathlineto{\pgfqpoint{4.186cm}{2.319cm}}
+	\pgfusepath{fill}
+	\pgfsetstrokecolor{#2}\pgfsetfillcolor{#2}%% AA
+	\pgfpathmoveto{\pgfqpoint{4.194cm}{1.227cm}}
+	\pgfpathlineto{\pgfqpoint{4.422cm}{1.227cm}}
+	\pgfpathlineto{\pgfqpoint{4.472cm}{1.457cm}}
+	\pgfpathlineto{\pgfqpoint{4.762cm}{1.457cm}}
+	\pgfpathlineto{\pgfqpoint{4.812cm}{1.227cm}}
+	\pgfpathlineto{\pgfqpoint{5.04cm}{1.227cm}}
+	\pgfpathlineto{\pgfqpoint{4.752cm}{2.314cm}}
+	\pgfpathlineto{\pgfqpoint{4.481cm}{2.314cm}}
+	\pgfpathlineto{\pgfqpoint{4.194cm}{1.227cm}}
+	\pgfpathclose
+	\pgfpathmoveto{\pgfqpoint{4.615cm}{2.125cm}}
+	\pgfpathlineto{\pgfqpoint{4.618cm}{2.125cm}}
+	\pgfpathlineto{\pgfqpoint{4.724cm}{1.637cm}}
+	\pgfpathlineto{\pgfqpoint{4.51cm}{1.637cm}}
+	\pgfpathlineto{\pgfqpoint{4.615cm}{2.125cm}}
+	\pgfseteorule\pgfusepath{fill}\pgfsetnonzerorule
+	\pgfpathmoveto{\pgfqpoint{4.918cm}{1.227cm}}
+	\pgfpathlineto{\pgfqpoint{5.147cm}{1.227cm}}
+	\pgfpathlineto{\pgfqpoint{5.197cm}{1.457cm}}
+	\pgfpathlineto{\pgfqpoint{5.486cm}{1.457cm}}
+	\pgfpathlineto{\pgfqpoint{5.536cm}{1.227cm}}
+	\pgfpathlineto{\pgfqpoint{5.765cm}{1.227cm}}
+	\pgfpathlineto{\pgfqpoint{5.477cm}{2.314cm}}
+	\pgfpathlineto{\pgfqpoint{5.206cm}{2.314cm}}
+	\pgfpathlineto{\pgfqpoint{4.918cm}{1.227cm}}
+	\pgfpathclose
+	\pgfpathmoveto{\pgfqpoint{5.34cm}{2.125cm}}
+	\pgfpathlineto{\pgfqpoint{5.343cm}{2.125cm}}
+	\pgfpathlineto{\pgfqpoint{5.448cm}{1.637cm}}
+	\pgfpathlineto{\pgfqpoint{5.235cm}{1.637cm}}
+	\pgfpathlineto{\pgfqpoint{5.34cm}{2.125cm}}
+	\pgfseteorule\pgfusepath{fill}\pgfsetnonzerorule
+	\pgfpathmoveto{\pgfqpoint{6.418cm}{1.947cm}}%% C
+	\pgfpathcurveto{\pgfqpoint{6.418cm}{2.105cm}}{\pgfqpoint{6.395cm}{2.335cm}}{\pgfqpoint{6.081cm}{2.335cm}}
+	\pgfpathcurveto{\pgfqpoint{5.752cm}{2.335cm}}{\pgfqpoint{5.711cm}{2.101cm}}{\pgfqpoint{5.711cm}{1.771cm}}
+	\pgfpathcurveto{\pgfqpoint{5.711cm}{1.44cm}}{\pgfqpoint{5.752cm}{1.206cm}}{\pgfqpoint{6.081cm}{1.206cm}}
+	\pgfpathcurveto{\pgfqpoint{6.369cm}{1.206cm}}{\pgfqpoint{6.427cm}{1.408cm}}{\pgfqpoint{6.427cm}{1.643cm}}
+	\pgfpathlineto{\pgfqpoint{6.208cm}{1.643cm}}
+	\pgfpathcurveto{\pgfqpoint{6.208cm}{1.408cm}}{\pgfqpoint{6.15cm}{1.367cm}}{\pgfqpoint{6.071cm}{1.367cm}}
+	\pgfpathcurveto{\pgfqpoint{5.976cm}{1.367cm}}{\pgfqpoint{5.931cm}{1.426cm}}{\pgfqpoint{5.931cm}{1.755cm}}
+	\pgfpathcurveto{\pgfqpoint{5.931cm}{2.063cm}}{\pgfqpoint{5.956cm}{2.174cm}}{\pgfqpoint{6.068cm}{2.174cm}}
+	\pgfpathcurveto{\pgfqpoint{6.167cm}{2.174cm}}{\pgfqpoint{6.199cm}{2.105cm}}{\pgfqpoint{6.199cm}{1.947cm}}
+	\pgfpathlineto{\pgfqpoint{6.418cm}{1.947cm}}
+	\pgfusepath{fill}
+	\pgfpathmoveto{\pgfqpoint{6.46cm}{1.227cm}}%% H
+	\pgfpathlineto{\pgfqpoint{6.679cm}{1.227cm}}
+	\pgfpathlineto{\pgfqpoint{6.679cm}{1.71cm}}
+	\pgfpathlineto{\pgfqpoint{6.935cm}{1.71cm}}
+	\pgfpathlineto{\pgfqpoint{6.935cm}{1.227cm}}
+	\pgfpathlineto{\pgfqpoint{7.154cm}{1.227cm}}
+	\pgfpathlineto{\pgfqpoint{7.154cm}{2.314cm}}
+	\pgfpathlineto{\pgfqpoint{6.935cm}{2.314cm}}
+	\pgfpathlineto{\pgfqpoint{6.935cm}{1.898cm}}
+	\pgfpathlineto{\pgfqpoint{6.679cm}{1.898cm}}
+	\pgfpathlineto{\pgfqpoint{6.679cm}{2.314cm}}
+	\pgfpathlineto{\pgfqpoint{6.46cm}{2.314cm}}
+	\pgfpathlineto{\pgfqpoint{6.46cm}{1.227cm}}
+	\pgfusepath{fill}
+	\pgfpathmoveto{\pgfqpoint{7.215cm}{2.314cm}}%% E
+	\pgfpathlineto{\pgfqpoint{7.215cm}{1.227cm}}
+	\pgfpathlineto{\pgfqpoint{7.838cm}{1.227cm}}
+	\pgfpathlineto{\pgfqpoint{7.838cm}{1.407cm}}
+	\pgfpathlineto{\pgfqpoint{7.434cm}{1.407cm}}
+	\pgfpathlineto{\pgfqpoint{7.434cm}{1.699cm}}
+	\pgfpathlineto{\pgfqpoint{7.8cm}{1.699cm}}
+	\pgfpathlineto{\pgfqpoint{7.8cm}{1.879cm}}
+	\pgfpathlineto{\pgfqpoint{7.434cm}{1.879cm}}
+	\pgfpathlineto{\pgfqpoint{7.434cm}{2.134cm}}
+	\pgfpathlineto{\pgfqpoint{7.823cm}{2.134cm}}
+	\pgfpathlineto{\pgfqpoint{7.823cm}{2.314cm}}
+	\pgfpathlineto{\pgfqpoint{7.215cm}{2.314cm}}
+	\pgfusepath{fill}
+	\pgfpathmoveto{\pgfqpoint{7.887cm}{2.314cm}}%% N
+	\pgfpathlineto{\pgfqpoint{7.887cm}{1.227cm}}
+	\pgfpathlineto{\pgfqpoint{8.088cm}{1.227cm}}
+	\pgfpathlineto{\pgfqpoint{8.088cm}{1.988cm}}
+	\pgfpathlineto{\pgfqpoint{8.091cm}{1.988cm}}
+	\pgfpathlineto{\pgfqpoint{8.359cm}{1.227cm}}
+	\pgfpathlineto{\pgfqpoint{8.608cm}{1.227cm}}
+	\pgfpathlineto{\pgfqpoint{8.608cm}{2.314cm}}
+	\pgfpathlineto{\pgfqpoint{8.407cm}{2.314cm}}
+	\pgfpathlineto{\pgfqpoint{8.407cm}{1.57cm}}
+	\pgfpathlineto{\pgfqpoint{8.404cm}{1.57cm}}
+	\pgfpathlineto{\pgfqpoint{8.139cm}{2.314cm}}
+	\pgfpathlineto{\pgfqpoint{7.887cm}{2.314cm}}
+	\pgfusepath{fill}
+%%\pgfsetstrokecolor{green}\pgfsetfillcolor{red}
+
+	\pgfpathmoveto{\pgfqpoint{5.769cm}{0.968cm}}%% R
+	\pgfpathlineto{\pgfqpoint{5.872cm}{0.968cm}}
+	\pgfpathcurveto{\pgfqpoint{5.971cm}{0.968cm}}{\pgfqpoint{6.025cm}{0.917cm}}{\pgfqpoint{6.025cm}{0.817cm}}
+	\pgfpathcurveto{\pgfqpoint{6.025cm}{0.7cm}}{\pgfqpoint{5.965cm}{0.654cm}}{\pgfqpoint{5.86cm}{0.654cm}}
+	\pgfpathlineto{\pgfqpoint{5.769cm}{0.654cm}}
+	\pgfpathlineto{\pgfqpoint{5.769cm}{0.968cm}}
+	\pgfpathclose
+	\pgfpathmoveto{\pgfqpoint{5.55cm}{0.042cm}}
+	\pgfpathlineto{\pgfqpoint{5.769cm}{0.042cm}}
+	\pgfpathlineto{\pgfqpoint{5.769cm}{0.502cm}}
+	\pgfpathlineto{\pgfqpoint{5.886cm}{0.502cm}}
+	\pgfpathcurveto{\pgfqpoint{5.974cm}{0.502cm}}{\pgfqpoint{6.012cm}{0.45cm}}{\pgfqpoint{6.016cm}{0.365cm}}
+	\pgfpathlineto{\pgfqpoint{6.022cm}{0.156cm}}
+	\pgfpathcurveto{\pgfqpoint{6.023cm}{0.114cm}}{\pgfqpoint{6.028cm}{0.072cm}}{\pgfqpoint{6.049cm}{0.042cm}}
+	\pgfpathlineto{\pgfqpoint{6.287cm}{0.042cm}}
+	\pgfpathlineto{\pgfqpoint{6.287cm}{0.051cm}}
+	\pgfpathcurveto{\pgfqpoint{6.245cm}{0.072cm}}{\pgfqpoint{6.239cm}{0.132cm}}{\pgfqpoint{6.238cm}{0.246cm}}
+	\pgfpathcurveto{\pgfqpoint{6.235cm}{0.476cm}}{\pgfqpoint{6.212cm}{0.558cm}}{\pgfqpoint{6.063cm}{0.578cm}}
+	\pgfpathlineto{\pgfqpoint{6.063cm}{0.581cm}}
+	\pgfpathcurveto{\pgfqpoint{6.186cm}{0.607cm}}{\pgfqpoint{6.244cm}{0.704cm}}{\pgfqpoint{6.244cm}{0.849cm}}
+	\pgfpathcurveto{\pgfqpoint{6.244cm}{1.035cm}}{\pgfqpoint{6.134cm}{1.129cm}}{\pgfqpoint{5.955cm}{1.129cm}}
+	\pgfpathlineto{\pgfqpoint{5.55cm}{1.129cm}}
+	\pgfpathlineto{\pgfqpoint{5.55cm}{0.042cm}}
+	\pgfseteorule\pgfusepath{fill}\pgfsetnonzerorule
+	%\pgfsetstrokecolor{black}\pgfsetfillcolor{green}
+	\pgfpathmoveto{\pgfqpoint{2.318cm}{1.129cm}}%% U
+	\pgfpathlineto{\pgfqpoint{2.318cm}{0.371cm}}
+	\pgfpathcurveto{\pgfqpoint{2.318cm}{0.08cm}}{\pgfqpoint{2.487cm}{0.021cm}}{\pgfqpoint{2.665cm}{0.021cm}}
+	\pgfpathcurveto{\pgfqpoint{2.843cm}{0.021cm}}{\pgfqpoint{3.012cm}{0.094cm}}{\pgfqpoint{3.012cm}{0.371cm}}
+	\pgfpathlineto{\pgfqpoint{3.012cm}{1.129cm}}
+	\pgfpathlineto{\pgfqpoint{2.793cm}{1.129cm}}
+	\pgfpathlineto{\pgfqpoint{2.793cm}{0.371cm}}
+	\pgfpathcurveto{\pgfqpoint{2.793cm}{0.263cm}}{\pgfqpoint{2.767cm}{0.182cm}}{\pgfqpoint{2.665cm}{0.182cm}}
+	\pgfpathcurveto{\pgfqpoint{2.563cm}{0.182cm}}{\pgfqpoint{2.537cm}{0.263cm}}{\pgfqpoint{2.537cm}{0.371cm}}
+	\pgfpathlineto{\pgfqpoint{2.537cm}{1.129cm}}
+	\pgfpathlineto{\pgfqpoint{2.318cm}{1.129cm}}
+	\pgfusepath{fill}
+	\pgfpathmoveto{\pgfqpoint{3.066cm}{1.129cm}}%% N
+	\pgfpathlineto{\pgfqpoint{3.066cm}{0.042cm}}
+	\pgfpathlineto{\pgfqpoint{3.267cm}{0.042cm}}
+	\pgfpathlineto{\pgfqpoint{3.267cm}{0.803cm}}
+	\pgfpathlineto{\pgfqpoint{3.27cm}{0.803cm}}
+	\pgfpathlineto{\pgfqpoint{3.537cm}{0.042cm}}
+	\pgfpathlineto{\pgfqpoint{3.787cm}{0.042cm}}
+	\pgfpathlineto{\pgfqpoint{3.787cm}{1.129cm}}
+	\pgfpathlineto{\pgfqpoint{3.586cm}{1.129cm}}
+	\pgfpathlineto{\pgfqpoint{3.586cm}{0.385cm}}
+	\pgfpathlineto{\pgfqpoint{3.583cm}{0.385cm}}
+	\pgfpathlineto{\pgfqpoint{3.318cm}{1.129cm}}
+	\pgfpathlineto{\pgfqpoint{3.066cm}{1.129cm}}
+	\pgfusepath{fill}
+	\pgfpathmoveto{\pgfqpoint{3.844cm}{0.042cm}}%% I
+	\pgfpathlineto{\pgfqpoint{4.063cm}{0.042cm}}
+	\pgfpathlineto{\pgfqpoint{4.063cm}{1.129cm}}
+	\pgfpathlineto{\pgfqpoint{3.844cm}{1.129cm}}
+	\pgfpathclose
+	\pgfusepath{fill}
+	\pgfpathmoveto{\pgfqpoint{4.078cm}{1.129cm}}%% V
+	\pgfpathlineto{\pgfqpoint{4.327cm}{0.042cm}}
+	\pgfpathlineto{\pgfqpoint{4.609cm}{0.042cm}}
+	\pgfpathlineto{\pgfqpoint{4.859cm}{1.129cm}}
+	\pgfpathlineto{\pgfqpoint{4.632cm}{1.129cm}}
+	\pgfpathlineto{\pgfqpoint{4.471cm}{0.325cm}}
+	\pgfpathlineto{\pgfqpoint{4.466cm}{0.325cm}}
+	\pgfpathlineto{\pgfqpoint{4.312cm}{1.129cm}}
+	\pgfpathlineto{\pgfqpoint{4.078cm}{1.129cm}}
+	\pgfusepath{fill}
+	\pgfpathmoveto{\pgfqpoint{4.878cm}{1.129cm}}%% E
+	\pgfpathlineto{\pgfqpoint{4.878cm}{0.042cm}}
+	\pgfpathlineto{\pgfqpoint{5.501cm}{0.042cm}}
+	\pgfpathlineto{\pgfqpoint{5.501cm}{0.222cm}}
+	\pgfpathlineto{\pgfqpoint{5.097cm}{0.222cm}}
+	\pgfpathlineto{\pgfqpoint{5.097cm}{0.514cm}}
+	\pgfpathlineto{\pgfqpoint{5.463cm}{0.514cm}}
+	\pgfpathlineto{\pgfqpoint{5.463cm}{0.694cm}}
+	\pgfpathlineto{\pgfqpoint{5.097cm}{0.694cm}}
+	\pgfpathlineto{\pgfqpoint{5.097cm}{0.949cm}}
+	\pgfpathlineto{\pgfqpoint{5.486cm}{0.949cm}}
+	\pgfpathlineto{\pgfqpoint{5.486cm}{1.129cm}}
+	\pgfpathlineto{\pgfqpoint{4.878cm}{1.129cm}}
+	\pgfusepath{fill}
+
+	\pgfpathmoveto{\pgfqpoint{6.262cm}{0.381cm}}%% S
+	\pgfpathlineto{\pgfqpoint{6.262cm}{0.337cm}}
+	\pgfpathcurveto{\pgfqpoint{6.262cm}{0.136cm}}{\pgfqpoint{6.359cm}{0.021cm}}{\pgfqpoint{6.608cm}{0.021cm}}
+	\pgfpathcurveto{\pgfqpoint{6.845cm}{0.021cm}}{\pgfqpoint{6.985cm}{0.124cm}}{\pgfqpoint{6.985cm}{0.354cm}}
+	\pgfpathcurveto{\pgfqpoint{6.985cm}{0.486cm}}{\pgfqpoint{6.943cm}{0.57cm}}{\pgfqpoint{6.778cm}{0.642cm}}
+	\pgfpathlineto{\pgfqpoint{6.609cm}{0.715cm}}
+	\pgfpathcurveto{\pgfqpoint{6.516cm}{0.754cm}}{\pgfqpoint{6.497cm}{0.795cm}}{\pgfqpoint{6.497cm}{0.862cm}}
+	\pgfpathcurveto{\pgfqpoint{6.497cm}{0.926cm}}{\pgfqpoint{6.522cm}{0.989cm}}{\pgfqpoint{6.621cm}{0.989cm}}
+	\pgfpathcurveto{\pgfqpoint{6.705cm}{0.989cm}}{\pgfqpoint{6.74cm}{0.929cm}}{\pgfqpoint{6.74cm}{0.827cm}}
+	\pgfpathlineto{\pgfqpoint{6.95cm}{0.827cm}}
+	\pgfpathlineto{\pgfqpoint{6.95cm}{0.858cm}}
+	\pgfpathcurveto{\pgfqpoint{6.95cm}{1.066cm}}{\pgfqpoint{6.809cm}{1.15cm}}{\pgfqpoint{6.614cm}{1.15cm}}
+	\pgfpathcurveto{\pgfqpoint{6.407cm}{1.15cm}}{\pgfqpoint{6.277cm}{1.042cm}}{\pgfqpoint{6.277cm}{0.831cm}}
+	\pgfpathcurveto{\pgfqpoint{6.277cm}{0.649cm}}{\pgfqpoint{6.367cm}{0.569cm}}{\pgfqpoint{6.562cm}{0.502cm}}
+	\pgfpathcurveto{\pgfqpoint{6.707cm}{0.451cm}}{\pgfqpoint{6.757cm}{0.415cm}}{\pgfqpoint{6.757cm}{0.316cm}}
+	\pgfpathcurveto{\pgfqpoint{6.757cm}{0.225cm}}{\pgfqpoint{6.693cm}{0.182cm}}{\pgfqpoint{6.626cm}{0.182cm}}
+	\pgfpathcurveto{\pgfqpoint{6.51cm}{0.182cm}}{\pgfqpoint{6.481cm}{0.247cm}}{\pgfqpoint{6.481cm}{0.349cm}}
+	\pgfpathlineto{\pgfqpoint{6.481cm}{0.381cm}}
+	\pgfpathlineto{\pgfqpoint{6.262cm}{0.381cm}}
+	\pgfusepath{fill}
+	\pgfpathmoveto{\pgfqpoint{7.014cm}{0.042cm}}%% I
+	\pgfpathlineto{\pgfqpoint{7.233cm}{0.042cm}}
+	\pgfpathlineto{\pgfqpoint{7.233cm}{1.129cm}}
+	\pgfpathlineto{\pgfqpoint{7.014cm}{1.129cm}}
+	\pgfpathclose
+	\pgfusepath{fill}
+	\pgfpathmoveto{\pgfqpoint{7.262cm}{1.129cm}}%% T
+	\pgfpathlineto{\pgfqpoint{7.262cm}{0.949cm}}
+	\pgfpathlineto{\pgfqpoint{7.499cm}{0.949cm}}
+	\pgfpathlineto{\pgfqpoint{7.499cm}{0.042cm}}
+	\pgfpathlineto{\pgfqpoint{7.718cm}{0.042cm}}
+	\pgfpathlineto{\pgfqpoint{7.718cm}{0.949cm}}
+	\pgfpathlineto{\pgfqpoint{7.956cm}{0.949cm}}
+	\pgfpathlineto{\pgfqpoint{7.956cm}{1.129cm}}
+	\pgfpathlineto{\pgfqpoint{7.262cm}{1.129cm}}
+	\pgfusepath{fill}
+	\pgfpathmoveto{\pgfqpoint{7.827cm}{1.129cm}}%% Y
+	\pgfpathlineto{\pgfqpoint{8.108cm}{0.47cm}}
+	\pgfpathlineto{\pgfqpoint{8.108cm}{0.042cm}}
+	\pgfpathlineto{\pgfqpoint{8.328cm}{0.042cm}}
+	\pgfpathlineto{\pgfqpoint{8.328cm}{0.47cm}}
+	\pgfpathlineto{\pgfqpoint{8.609cm}{1.129cm}}
+	\pgfpathlineto{\pgfqpoint{8.372cm}{1.129cm}}
+	\pgfpathlineto{\pgfqpoint{8.219cm}{0.709cm}}
+	\pgfpathlineto{\pgfqpoint{8.216cm}{0.709cm}}
+	\pgfpathlineto{\pgfqpoint{8.073cm}{1.129cm}}
+	\pgfpathlineto{\pgfqpoint{7.827cm}{1.129cm}}
+	\pgfusepath{fill}
+	%%\end{pgfscope}
+	%%\end{tikzpicture}%
+	}
+
+\@ifundefined{RWTHAC}{%
+	\DeclareRobustCommand{\RWTHAC}{\textsf{R\kern.05em R\kern.05em%
+	T\kern.05em H\kern.1em-\kern.1em AACHEN}}}{}
+
+\endinput
